@@ -13,11 +13,9 @@ import {
 import { Input } from "@/components/ui/input";
 import "react-phone-number-input/style.css";
 import PhoneInput from "react-phone-number-input";
-
 import DatePicker from "react-datepicker";
-
 import "react-datepicker/dist/react-datepicker.css";
-import { Select, SelectContent, SelectTrigger, SelectValue } from "./ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { Textarea } from "./ui/textarea";
 import { Checkbox } from "./ui/checkbox";
 import { FaCalendarAlt } from "react-icons/fa";
@@ -29,6 +27,7 @@ export const FormFieldType = {
   CHECKBOX: "checkbox",
   DATE_PICKER: "datePicker",
   SELECT: "select",
+  RADIO: "radio",
   SKELETON: "skeleton",
 };
 
@@ -38,11 +37,11 @@ const RenderField = ({ field, props }) => {
     iconSrc,
     iconAlt,
     disabled,
-    children,
     placeholder,
     showTimeSelect,
     dateFormat,
     renderSkeleton,
+    options,
   } = props;
 
   switch (fieldType) {
@@ -75,24 +74,25 @@ const RenderField = ({ field, props }) => {
             placeholder={placeholder}
             {...field}
             className="shad-textArea focus:ring-2 focus:ring-violet-500 transition-all duration-200 shadow-sm hover:shadow-md resize-none"
-            disabled={props.disabled}
+            disabled={disabled}
           />
         </FormControl>
       );
+
     case FormFieldType.PHONE_INPUT:
       return (
         <div className="flex rounded-md border border-dark-500 bg-dark-400 p-2 focus-within:ring-2 focus-within:ring-violet-500 transition-all duration-200 shadow-sm hover:shadow-md">
-        <FormControl>
-          <PhoneInput
-            defaultCountry="IN"
-            placeholder={placeholder}
-            international
-            withCountryCallingCode
-            value={field.value}
-            onChange={field.onChange}
-            className="input-phone focus:outline-none w-full"
+          <FormControl>
+            <PhoneInput
+              defaultCountry="IN"
+              placeholder={placeholder}
+              international
+              withCountryCallingCode
+              value={field.value}
+              onChange={field.onChange}
+              className="input-phone focus:outline-none w-full"
             />
-        </FormControl>
+          </FormControl>
         </div>
       );
 
@@ -105,7 +105,7 @@ const RenderField = ({ field, props }) => {
               selected={field.value}
               onChange={(date) => field.onChange(date)}
               dateFormat={dateFormat ?? "MM/dd/yyyy"}
-              showTimeSelect={showTimeSelect ?? false}
+              showTimeSelect={showTimeSelect ?? false} // Changed to optional chaining
               timeInputLabel="Time:"
               wrapperClassName="date-picker w-full"
               className="focus:outline-none py-2 px-3 w-full"
@@ -150,13 +150,33 @@ const RenderField = ({ field, props }) => {
         </FormControl>
       );
 
+      case FormFieldType.RADIO:
+        return (
+          <FormControl>
+            <div className="radio-group">
+              {options.map(option => (
+                <label key={option.value} className="radio-label">
+                  <input
+                    type="radio"
+                    value={option.value}
+                    checked={field.value === option.value}
+                    onChange={() => field.onChange(option.value)}
+                    className="radio-input"
+                  />
+                  {option.label}
+                </label>
+              ))}
+            </div>
+          </FormControl>
+        );
+
     default:
-      break;
+      return null;
   }
 };
 
 const CustomFormField = (props) => {
-  const { control, fieldType, name, label } = props;
+  const { control, fieldType, name, label, options } = props;
   return (
     <FormField
       control={control}

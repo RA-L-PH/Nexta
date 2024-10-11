@@ -1,13 +1,19 @@
 import React, {useState, useEffect} from 'react';
 import { Link } from 'react-router-dom'; // Import Link from react-router-dom
-import doc1 from '../assets/doctor1.png';
-import doc2 from '../assets/doctor2.png';
-import doc3 from '../assets/doctor3.jpg';
-import doc4 from '../assets/doctor4.png';
-import doc5 from '../assets/doctor5.jpg';
-import doc6 from '../assets/doctor6.png';
-import doc7 from '../assets/doctor7.png';
-import doc8 from '../assets/doctor14.png'
+import doc1 from '../assets/se.jpg';
+import doc2 from '../assets/ds.jpg';
+import doc3 from '../assets/pm.png';
+import doc4 from '../assets/fa.jpg';
+import doc5 from '../assets/mm.jpg';
+import doc6 from '../assets/hrs.jpg';
+import doc7 from '../assets/ba.jpg';
+import doc8 from '../assets/cs.jpg';
+import doc9 from '../assets/prm.jpg';
+import doc10 from '../assets/sam.jpg';
+import doc11 from '../assets/na.jpg';
+import doc12 from '../assets/bb.jpg';
+import { BiFileFind } from "react-icons/bi";
+import logo from "../assets/Designer (1).png";
 
 import '@fontsource/poppins/400.css'; // Weight 400
 import '@fontsource/poppins/700.css';
@@ -20,14 +26,18 @@ const HomePage = () => {
 
   // Array of doctor specialties for the categories section
   const specialties = [
-    { name: 'Cardiology', img: doc1 },
-    { name: 'Dermatology', img: doc2 },
-    { name: 'Pediatrics', img: doc3 },
-    { name: 'Neurology', img: doc4 },
-    { name: 'Orthopedics', img: doc5 },
-    { name: 'Psychiatry', img: doc6 },
-    { name: 'Gynecology', img: doc7 },
-    { name: 'Dentist', img: doc8 },
+    { name: 'Software Engineer', img: doc1 },
+    { name: 'Data Scientist', img: doc2 },
+    { name: 'Project Manager', img: doc3 },
+    { name: 'Financial Analyst', img: doc4 },
+    { name: 'Marketing Manager', img: doc5 },
+    { name: 'HR Manager', img: doc6 },
+    { name: 'Business Analyst', img: doc7 },
+    { name: 'Cybersecurity Specialist', img: doc8 },
+    { name: 'Product Manager', img: doc9 },
+    { name: 'Sales Manager', img: doc10 },
+    { name: 'Network Administrator', img: doc11 },
+    { name: 'All', img: doc12 },
   ];
   // Slideshow state and logic
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -42,7 +52,7 @@ const HomePage = () => {
 
 
   return (
-    <div>
+      <div>
       {/* Section 1: Background Image */}
       <div
         className="flex flex-col md:flex-row min-h-screen bg-cover bg-center"
@@ -52,38 +62,38 @@ const HomePage = () => {
         }}
       >
         {/* Main Content */}
-        <div className="flex-1 flex items-center justify-center bg-white-800 bg-opacity-1 p-4">
+        <div className="flex-1 flex items-center justify-center bg-white p-4">
           {/* Banner Section */}
-          <div className="bg-purple-600 w-full max-w rounded-lg shadow-lg flex flex-col md:flex-row h-full animate-fade-in">
+          <div className="bg-blue-900 w-full max-w rounded-lg shadow-lg flex flex-col md:flex-row h-full animate-fade-in">
             {/* Left Side (Text Content) */}
             <div className="w-full md:w-1/2 p-8 flex flex-col justify-center text-white">
-            <h1 className="text-4xl md:text-7xl font-bold mb-4 font-sans">
-              <span className="inline-block animate-fade-in-right" style={{ animationDelay: '0s' }}>YOUR</span>{' '}
-              <span className="inline-block animate-fade-in-right" style={{ animationDelay: '0.1s' }}>HEALTH</span>
-            </h1>
-            <h1 className="text-4xl md:text-7xl font-bold mb-4 font-sans">
-              <span className="inline-block animate-fade-in-right" style={{ animationDelay: '0.2s' }}>IS</span>{' '}
-              <span className="inline-block animate-fade-in-right" style={{ animationDelay: '0.3s' }}>OUR</span>
-            </h1>
-            <h1 className="text-4xl md:text-7xl font-bold mb-6 font-sans">
-              <span className="inline-block animate-fade-in-right" style={{ animationDelay: '0.4s' }}>PRIORITY</span>
-            </h1>
-              <p className="text-lg md:text-xl mb-6">
-                <span className="animate-fade-in">Schedule</span>{' '}
-                <span className="animate-fade-in">appointments</span>{' '}
-                <span className="animate-fade-in">with</span>{' '}
-                <span className="animate-fade-in">top</span>{' '}
-                <span className="animate-fade-in">healthcare</span>{' '}
-                <span className="animate-fade-in">professionals</span>{' '}
-                <span className="animate-fade-in">easily.</span>
+              <h1 className="text-4xl md:text-7xl font-bold mb-4 font-sans">
+                <span className="inline-block animate-fade-in-right" style={{ animationDelay: '0s' }}>WHERE</span>{' '}
+                <span className="inline-block animate-fade-in-right" style={{ animationDelay: '0.1s' }}>GREAT</span>
+              </h1>
+              <h1 className="text-4xl md:text-7xl font-bold mb-4 font-sans">
+                <span className="inline-block animate-fade-in-right" style={{ animationDelay: '0.2s' }}>COMPANIES</span>{' '}
+                <span className="inline-block animate-fade-in-right" style={{ animationDelay: '0.3s' }}>AND</span>
+              </h1>
+              <h1 className="text-4xl md:text-7xl font-bold mb-4 font-sans">
+                <span className="inline-block animate-fade-in-right" style={{ animationDelay: '0.4s' }}>GREAT</span>{' '}
+                <span className="inline-block animate-fade-in-right" style={{ animationDelay: '0.5s' }}>PEOPLE</span>
+              </h1>
+              <h1 className="text-4xl md:text-7xl font-bold mb-6 font-sans">
+                <span className="inline-block animate-fade-in-right" style={{ animationDelay: '0.6s' }}>MEET</span>
+              </h1>
+              <p className="text-lg md:text-xl mb-6 text-gray-300">
+                Find the right fit for your Company's future.
               </p>
-                
-                <button onClick={() => navigate('/doctor')} className="bg-red-500 text-white px-4 py-3 rounded-full hover:bg-red-600 mb-9 transform hover:scale-105 transition duration-500 flex items-center justify-center font-semibold text-lg">
-                <svg className="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-                Book Appointment Now!
+
+              <button
+                onClick={() => navigate('/doctor')}
+                className="bg-blue-500 text-black px-4 py-3 rounded-full hover:bg-blue-600 mb-9 transform hover:scale-105 transition duration-500 flex items-center justify-center font-semibold text-lg"
+              >
+                <BiFileFind size={30} />
+                Find Them NOW!!
               </button>
+
               <div className="flex items-center animate-slide-left">
                 <div className="bg-[#e1e3fb] p-3 rounded-full mr-4">
                   <svg
@@ -108,7 +118,7 @@ const HomePage = () => {
               </div>
             </div>
 
-            {/* Right Side (Framed Slideshow) */}
+            {/* Right Side (Slideshow) */}
             <div className="hidden md:flex w-1/2 h-full items-center justify-center">
               <div className="border-4 border-gray-200 rounded-lg overflow-hidden w-3/4 h-3/4 px-12 py-9 relative">
                 {/* Slideshow */}
@@ -130,48 +140,48 @@ const HomePage = () => {
       </div>
 
       {/* Section 2: Content from File 2 (Doctor Specialties) */}
-          <div className={`min-h-screen bg-gradient-to-b from-purple-500 to-indigo-600 p-8 text-white mt-10 backdrop-blur-md poppins-400`}>
-            {/* Header */}
-            <header className="mb-12">
-              <h1 className="text-center text-4xl md:text-6xl font-bold mb-4 tracking-tight">Discover Health Excellence at DocPoint</h1>
-              <p className="text-center text-xl md:text-2xl font-light">Connect with top-tier medical professionals and schedule your appointment effortlessly.</p>
-            </header>
+      <div className="min-h-screen bg-white p-8 text-black mt-10 backdrop-blur-md poppins-400">
+        {/* Header */}
+        <header className="mb-12">
+          <h1 className="text-center text-4xl md:text-6xl font-bold mb-4 tracking-tight">
+            Find new Beginnings to your End with Nexta
+          </h1>
+          <p className="text-center text-xl md:text-2xl font-light">Hire Effortlessly</p>
+        </header>
 
-            {/* Doctor Specialties Circular Cards */}
-            <section className="container mx-auto">
-              <h2 className="text-center text-3xl md:text-4xl font-semibold mb-10">Explore Our Medical Specialties</h2>
-          
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-                {specialties.map((specialty, index) => (
-                  <Link key={index} to={`/doctor/${specialty.name}`} className="relative bg-white rounded-lg shadow-lg overflow-hidden group transition-transform duration-300 transform hover:scale-105">
-                    <div className="w-full h-32 overflow-hidden">
-                      <img
-                        src={specialty.img}
-                        alt={specialty.name}
-                        className="w-full h-full object-cover transition-opacity duration-300 group-hover:opacity-70"
-                        style={{ objectPosition: 'center 20%' }}
-                      />
-                    </div>
-                    <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-40 transition-opacity duration-300 group-hover:opacity-0">
-                      <h3 className="text-white text-xl font-bold">{specialty.name}</h3>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            </section>
+        {/* Doctor Specialties Circular Cards */}
+        <section className="container mx-auto">
+          <h2 className="text-center text-3xl md:text-4xl font-semibold mb-10">Explore our Space</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+            {specialties.map((specialty, index) => (
+              <Link
+                key={index}
+                to={`/doctor/${specialty.name}`}
+                className="relative bg-white rounded-lg shadow-lg overflow-hidden group transition-transform duration-300 transform hover:scale-105"
+              >
+                <div className="w-full h-32 overflow-hidden">
+                  <img
+                    src={specialty.img}
+                    alt={specialty.name}
+                    className="w-full h-full object-cover transition-opacity duration-300 group-hover:opacity-70"
+                    style={{ objectPosition: 'center 20%' }}
+                  />
+                </div>
+                <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-40 transition-opacity duration-300 group-hover:opacity-0">
+                  <h3 className="text-white text-xl font-bold">{specialty.name}</h3>
+                </div>
+              </Link>
+            ))}
           </div>
+        </section>
+      </div>
 
-          <div>
-          <MyMap />
-        </div>
-              {/* Footer */}
-      <footer className="flex justify-around bg-gradient-to-b from-indigo-600 to-purple-500 text-white py-5">
+      {/* Footer */}
+      <footer className="flex justify-around bg-white from-indigo-600 to-purple-500 text-black py-5 border-t-2 border-black">
         <div className="container mx-auto flex flex-col md:flex-row justify-between items-center">
           <div className="flex ml-5 mb-4 md:mb-0">
-            <h3 className="text-2xl font-bold text-white">Doc</h3>
-            <h3 className="text-2xl font-bold text-yellow-500">Point</h3>
+          <img src={logo} className="h-20 w-20 mr-1" alt="Logo"/>
           </div>
-        
 
           <div className="flex space-x-4 text-gray-900">
             <Link to="/about" className="hover:underline">About Us</Link>
@@ -181,12 +191,12 @@ const HomePage = () => {
           </div>
 
           <div className="mt-4 md:mt-0 text-gray-900">
-            &copy; {new Date().getFullYear()} DocPoint. All rights reserved.
+            &copy; {new Date().getFullYear()} Nexta. All rights reserved.
           </div>
         </div>
-        
       </footer>
     </div>
+
   );
 };
 

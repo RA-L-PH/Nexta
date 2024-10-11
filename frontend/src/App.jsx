@@ -7,12 +7,13 @@ import DoctorPage from "./pages/DoctorPage";
 import LoginPage from "./pages/LoginPage";
 import FormPage from "./pages/FormPage";
 import ProfilePage from "./pages/ProfilePage";
-import DoctorForm from "./pages/DoctorForm";
+import DoctorForm from "./pages/FreelancerForm";
 import Calling from "./pages/room";
 import AdminDashboard from "./pages/AdminDashboard";
-import { Home, Calendar, LogIn } from "lucide-react";
+import { Home, LogIn } from "lucide-react";
 import { FaUserCircle } from "react-icons/fa";
-import { FaUserDoctor } from "react-icons/fa6";
+import { FaUserTie } from "react-icons/fa";
+import { CiViewList } from "react-icons/ci";
 import DoctorDetails from "./pages/DoctorDetails";
 import { MdAdminPanelSettings } from "react-icons/md";
 import { signOutUser } from "./firebase/auth";
@@ -26,6 +27,8 @@ import PediatricsPage from './pages/PediatricsPage'
 import PsychiatryPage from './pages/PsychiatryPage'
 import NeurologyPage from './pages/NeurologyPage'
 import DentistPage from './pages/DentistPage'
+import logo from "./assets/Designer (1).png";
+import FreelancerForm from "./pages/FreelancerForm";
 
 
 // PrivateRoute Component
@@ -70,11 +73,10 @@ const App = () => {
 
   return (
     <BrowserRouter>
-      <header className="flex justify-between items-center bg-gradient-to-r from-purple-600 to-indigo-600 p-4 shadow-lg">
+      <header className="flex justify-between items-center bg-gradient-to-r from-deep-blue to-soft-gray p-4 shadow-lg">
         <div className="flex items-center">
           <Link to="/" className="text-2xl font-bold cursor-pointer">
-            <span className="text-white">Doc</span>
-            <span className="text-yellow-400">Point</span>
+            <img src={logo} className="h-20 w-20 mr-2" alt="Logo"/>
           </Link>
         </div>
         <nav>
@@ -82,7 +84,7 @@ const App = () => {
             <li>
               <Link
                 to="/"
-                className="flex items-center text-white hover:text-yellow-300 transition-colors font-semibold"
+                className="flex items-center text-black hover:text-blue-300 transition-colors font-semibold"
               >
                 <Home className="mr-2 stroke-2" size={22} />
                 <span className="text-sm uppercase tracking-wide">Home</span>
@@ -91,26 +93,26 @@ const App = () => {
             <li>
               <Link
                 to="/doctor"
-                className="flex items-center text-white hover:text-yellow-300 transition-colors font-semibold"
+                className="flex items-center text-black hover:text-blue-300 transition-colors font-semibold"
               >
-                <FaUserDoctor className="mr-2" size={22} />
-                <span className="text-sm uppercase tracking-wide">Doctors</span>
+                <FaUserTie className="mr-2" size={22} />
+                <span className="text-sm uppercase tracking-wide">People</span>
               </Link>
             </li>
             <li>
               <Link
                 to="/appointments"
-                className="flex items-center text-white hover:text-yellow-300 transition-colors font-semibold"
+                className="flex items-center text-black hover:text-blue-300 transition-colors font-semibold"
               >
-                <Calendar className="mr-2 stroke-2" size={22} />
-                <span className="text-sm uppercase tracking-wide">My Appointments</span>
+                <CiViewList className="mr-2 stroke-1" size={22} />
+                <span className="text-sm uppercase tracking-wide">My HireList</span>
               </Link>
             </li>
             {user ? (
               <li className="relative" ref={dropdownRef}>
                 <button
                   onClick={toggleDropdown}
-                  className="flex items-center text-white hover:text-yellow-300 transition-colors font-semibold"
+                  className="flex items-center text-black hover:text-blue-300 transition-colors font-semibold"
                 >
                   <FaUserCircle className="mr-2" size={22} />
                   <span className="text-sm uppercase tracking-wide">{user.displayName}</span>
@@ -146,9 +148,9 @@ const App = () => {
             ) : (
               <li>
                 <Link to="/auth/login">
-                  <Button className="flex items-center bg-yellow-400 hover:bg-yellow-500 text-indigo-900 font-bold py-2 px-4 rounded-full transition-colors">
+                  <Button className="flex items-center bg-blue-400 hover:bg-blue-500 text-indigo-900 font-bold py-2 px-4 rounded-full transition-colors">
                     <LogIn className="mr-2 stroke-2" size={20} />
-                    <span className="text-sm uppercase tracking-wide">Login</span>
+                    <span className="text-sm uppercase tracking-wide text-black">Login</span>
                   </Button>
                 </Link>
               </li>
@@ -170,7 +172,7 @@ const App = () => {
 
           <Route path="/profile" element={<ProfilePage  />} />
           <Route path="/patientform" element={<FormPage />} />
-          <Route path="/doctorform" element={<DoctorForm />} /> 
+          <Route path="/doctorform" element={<FreelancerForm />} /> 
           <Route path= "/room/:roomId" element={<Calling />} />
           <Route path= "/main/:roomId" element={<UserAppointment/>} />
 
