@@ -87,7 +87,7 @@ const HomePage = () => {
               </p>
 
               <button
-                onClick={() => navigate('/doctor')}
+                onClick={() => navigate('/People/All')}
                 className="bg-blue-500 text-black px-4 py-3 rounded-full hover:bg-blue-600 mb-9 transform hover:scale-105 transition duration-500 flex items-center justify-center font-semibold text-lg"
               >
                 <BiFileFind size={30} />
@@ -156,7 +156,7 @@ const HomePage = () => {
             {specialties.map((specialty, index) => (
               <Link
                 key={index}
-                to={`/doctor/${specialty.name}`}
+                to={`/People/${specialty.name}`}
                 className="relative bg-white rounded-lg shadow-lg overflow-hidden group transition-transform duration-300 transform hover:scale-105"
               >
                 <div className="w-full h-32 overflow-hidden">

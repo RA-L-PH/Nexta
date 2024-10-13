@@ -92,7 +92,7 @@ const App = () => {
             </li>
             <li>
               <Link
-                to="/doctor"
+                to="/People"
                 className="flex items-center text-black hover:text-blue-300 transition-colors font-semibold"
               >
                 <FaUserTie className="mr-2" size={22} />
@@ -101,7 +101,7 @@ const App = () => {
             </li>
             <li>
               <Link
-                to="/appointments"
+                to="/HireList"
                 className="flex items-center text-black hover:text-blue-300 transition-colors font-semibold"
               >
                 <CiViewList className="mr-2 stroke-1" size={22} />
@@ -130,10 +130,10 @@ const App = () => {
                       </li>
                       <li>
                         <Link
-                          to="/appointments"
+                          to="/HireList"
                           className="block px-4 py-2 text-gray-700 hover:bg-indigo-100 transition-colors"
                         >
-                          My Appointments
+                          My HireList
                         </Link>
                       </li>
                       <li>
@@ -161,18 +161,18 @@ const App = () => {
       <main>
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/appointments" element={<UserAppointment />} />
+          <Route path="/HireList" element={<UserAppointment />} />
           <Route path="/auth/login" element={<LoginPage />} />
-          <Route path="/doctor" element={<DoctorPage />} />
-          <Route path="/doctor/:specialty" element={<DoctorPage />} />
+          <Route path="/People" element={<DoctorPage />} />
+          <Route path="/People/:specialty" element={<DoctorPage />} />
           <Route path="/admin" element={<AdminDashboard />} />
 
-          <Route path="/doctors/:id" element={<DoctorDetails />} />
+          <Route path="/People/:id" element={<DoctorDetails />} />
 
 
           <Route path="/profile" element={<ProfilePage  />} />
-          <Route path="/patientform" element={<FormPage />} />
-          <Route path="/doctorform" element={<FreelancerForm />} /> 
+          <Route path="/RegistrationCompany" element={<FormPage />} />
+          <Route path="/RegistrationUser" element={<FreelancerForm />} /> 
           <Route path= "/room/:roomId" element={<Calling />} />
           <Route path= "/main/:roomId" element={<UserAppointment/>} />
 

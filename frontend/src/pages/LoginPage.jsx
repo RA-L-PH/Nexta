@@ -13,7 +13,8 @@ import { AuthProvider, useAuth } from '@/contexts/authContext'
 import { useNavigate } from 'react-router-dom'
 import { toast, ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
-
+import { GoOrganization } from "react-icons/go";
+import { FaUserTie } from "react-icons/fa";
 import { getFirestore, doc, getDoc, setDoc } from "firebase/firestore";
 import { getAuth, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, sendPasswordResetEmail, createUserWithEmailAndPassword } from "firebase/auth";
 
@@ -127,7 +128,7 @@ function LoginPageContent() {
         login(userData)
         // setUserRole(localUserRole);
         toast.success('Logged in with Google successfully!');
-        navigate(localUserRole === 'patient' ? '/patientform' : '/doctorform');
+        navigate(localUserRole === 'patient' ? '/RegistrationCompany' : '/RegistrationUser');
       }
       setIsUserLoggedIn(true);
     } catch (error) {
@@ -231,12 +232,12 @@ function LoginPageContent() {
               <Tabs defaultValue="patient" className="w-full" onValueChange={handleTabChange}>
                 <TabsList className="grid w-full grid-cols-3 gap-3 bg-gray-100 p-2 rounded-lg h-18">
                   <TabsTrigger value="patient" className="py-2 text-sm font-medium transition-all duration-300 data-[state=active]:bg-white data-[state=active]:text-[#8891e2] data-[state=active]:shadow-md rounded-md hover:bg-gray-200">
-                    <FaUserInjured className="mr-2 text-lg" />
-                    Patient
+                    <GoOrganization className="mr-2 text-lg" />
+                    Company
                   </TabsTrigger>
                   <TabsTrigger value="doctor" className="py-2 text-sm font-medium transition-all duration-300 data-[state=active]:bg-white data-[state=active]:text-[#8891e2] data-[state=active]:shadow-md rounded-md hover:bg-gray-200">
-                    <FaUserMd className="mr-2 text-lg" />
-                    Doctor
+                    <FaUserTie className="mr-2 text-lg" />
+                    User
                   </TabsTrigger>
                   <TabsTrigger value="admin" className="py-2 text-sm font-medium transition-all duration-300 data-[state=active]:bg-white data-[state=active]:text-[#8891e2] data-[state=active]:shadow-md rounded-md hover:bg-gray-200">
                     <FaUserCog className="mr-2 text-lg" />
