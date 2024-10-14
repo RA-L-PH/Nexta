@@ -29,6 +29,7 @@ import NeurologyPage from './pages/NeurologyPage'
 import DentistPage from './pages/DentistPage'
 import logo from "./assets/Designer (1).png";
 import FreelancerForm from "./pages/FreelancerForm";
+import Checkout from "./pages/Checkout";
 
 
 // PrivateRoute Component
@@ -175,6 +176,7 @@ const App = () => {
           <Route path="/RegistrationUser" element={<FreelancerForm />} /> 
           <Route path= "/room/:roomId" element={<Calling />} />
           <Route path= "/main/:roomId" element={<UserAppointment/>} />
+          <Route path= "/checkout" element={<Checkout/>} />
 
 
         <Route path="/specialty/cardiology" element={<CardiologyPage />} />

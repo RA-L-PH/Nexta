@@ -70,7 +70,7 @@ function LoginPageContent() {
           navigate('/');
         } else {
           toast.success('Logged in successfully!');
-          navigate(localUserRole === 'patient' ? '/registerform' : '/doctorform');
+          navigate(localUserRole === 'patient' ? '/RegistrationCompany' : '/RegistrationUser');
         }
   
       } else {
@@ -89,7 +89,7 @@ function LoginPageContent() {
         // setUserRole(localUserRole);
         login(userData)
         toast.success('Signed up successfully!');
-        navigate(localUserRole === 'patient' ? '/registerform' : '/doctorform');
+        navigate(localUserRole === 'patient' ? '/RegistrationCompany' : '/RegistrationUser');
       }
       setIsUserLoggedIn(true);
     } catch (error) {

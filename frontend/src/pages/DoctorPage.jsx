@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faDollarSign, faClock, faBriefcase, faGraduationCap } from '@fortawesome/free-solid-svg-icons';
-import { getFirestore, collection, getDocs } from 'firebase/firestore';
+import { faDollarSign, faBriefcase, faGraduationCap } from '@fortawesome/free-solid-svg-icons';
+import { collection, getDocs, addDoc } from 'firebase/firestore';
 import { getStorage, ref, getDownloadURL } from 'firebase/storage';
+import { MdAddBox,MdCheckBox } from "react-icons/md";
+import { getAuth } from 'firebase/auth';
+import { db } from '../firebase/firebase'; // Adjust the import path if needed
 
 
 const storage = getStorage();
-const db = getFirestore();
 
 const DoctorPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -18,6 +20,7 @@ const DoctorPage = () => {
   const [sortOption, setSortOption] = useState('');
   const [doctors, setDoctors] = useState([]);
   const [filteredDoctors, setFilteredDoctors] = useState([]);
+  
 
   useEffect(() => {
     const fetchDoctors = async () => {
@@ -32,9 +35,8 @@ const DoctorPage = () => {
             const photoURL = await getDownloadURL(photoRef);
             return { ...data, photoURL };
           }));
-          return { ...userData, freelancerDetails: freelancerDetails || [] };
+          return { ...userData, freelancerDetails };
         }));
-        
         setDoctors(doctorsList);
         setFilteredDoctors(doctorsList);
       } catch (error) {
@@ -88,6 +90,33 @@ const DoctorPage = () => {
     setFilteredDoctors(filtered);
   }, [searchQuery, minFee, maxFee, minExperience, maxExperience, sortOption, doctors]);
 
+  const addToCart = async (doctorId) => {
+    try {
+      if (!doctorId) {
+        throw new Error('Doctor ID is undefined');
+      }
+  
+      const auth = getAuth();
+      const user = auth.currentUser;
+  
+      if (!user) {
+        throw new Error('User not authenticated');
+      }
+  
+      const userId = user.uid;
+      const cartRef = collection(db, 'users', userId, 'cart');
+  
+      await addDoc(cartRef, {
+        doctorId: doctorId,
+        addedAt: new Date()
+      });
+  
+      console.log('Doctor added to cart successfully');
+    } catch (error) {
+      console.error('Error adding doctor to cart:', error);
+    }
+  };
+  
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple-100 to-white py-8 font-sans">
       <div className="container mx-auto px-4">
@@ -163,6 +192,12 @@ const DoctorPage = () => {
               transition={{ duration: 0.3 }}
               className="bg-white rounded-lg shadow-lg p-6 flex flex-col items-center space-y-4"
             >
+            <button
+                onClick={() => addToCart(doctor.id)}
+                className="absolute top-0 left-0 bg-purple-500 text-white w-8 h-8 flex items-center justify-center rounded"
+              >
+                <MdAddBox />
+              </button>
               {doctor.freelancerDetails.map((freelancer, index) => (
                 <div key={index} className="flex flex-col items-center text-center space-y-4">
                   <img
