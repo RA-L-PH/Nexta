@@ -139,7 +139,7 @@ const DoctorPage = () => {
           addedAt: new Date()
         });
         setAddedToCart([...addedToCart, doctorId]);
-        toast.success('Doctor added to cart!', { position: "top-right", autoClose: 3000 });
+        toast.success('User added to cart!', { position: "top-right", autoClose: 3000 });
       }
     } catch (error) {
       console.error('Error adding/removing doctor to/from cart:', error);
