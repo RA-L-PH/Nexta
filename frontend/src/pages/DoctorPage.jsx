@@ -5,7 +5,7 @@ import { faDollarSign, faBriefcase, faGraduationCap } from '@fortawesome/free-so
 import { collection, getDocs, addDoc, deleteDoc, doc } from 'firebase/firestore';
 import { getStorage, ref, getDownloadURL } from 'firebase/storage';
 import { MdAddBox, MdCheckBox } from "react-icons/md";
-import { FaLinkedin, FaGithub, FaTwitter } from 'react-icons/fa';
+import { FaLinkedin, FaGithub, FaTwitter, FaFileAlt, FaBriefcase } from 'react-icons/fa';
 import { getAuth } from 'firebase/auth';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -25,6 +25,7 @@ const DoctorPage = () => {
   const [filteredDoctors, setFilteredDoctors] = useState([]);
   const [addedToCart, setAddedToCart] = useState([]);  // Doctors added to cart
   const [moreInfo, setMoreInfo] = useState({}); // Store whether "More Info" is shown for each doctor
+  const [resumeModal, setResumeModal] = useState({ isOpen: false, imageUrl: '' });
 
   useEffect(() => {
     const fetchDoctors = async () => {
@@ -37,7 +38,12 @@ const DoctorPage = () => {
             const data = freelancerDoc.data();
             const photoRef = ref(storage, data.photoFile);
             const photoURL = await getDownloadURL(photoRef);
-            return { ...data, photoURL };
+            let resumeURL = null;
+            if (data.resumeFile) {
+              const resumeRef = ref(storage, data.resumeFile);
+              resumeURL = await getDownloadURL(resumeRef);
+            }
+            return { ...data, photoURL, resumeURL };
           }));
           return { ...userData, freelancerDetails };
         }));
@@ -145,6 +151,16 @@ const DoctorPage = () => {
       [doctorId]: !prevState[doctorId]
     }));
   };
+
+  const handleResumeModal = (doctorId, resumeURL) => {
+    setResumeModal({ isOpen: true, imageUrl: resumeURL });
+  };
+
+  const handleCloseResumeModal = () => {
+    setResumeModal({ isOpen: false, imageUrl: '' });
+  };
+
+  
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple-100 to-white py-8 font-sans">
@@ -282,6 +298,20 @@ const DoctorPage = () => {
                             <FaTwitter size={24} />
                           </a>
                         )}
+                        {freelancer.resumeURL && (
+                          <button
+                            onClick={() => handleResumeModal(doctor.id, freelancer.resumeURL)}
+                            className="text-lg text-gray-600"
+                          >
+                            <FaFileAlt size={24} />
+                          </button>
+                        )}
+                        {freelancer.portfolioURL && (
+                          <a href={freelancer.portfolioURL } className="text-lg text-gray-600" target="_blank" rel="noopener noreferrer">
+                            <FaBriefcase size={24} />
+                            View Portfolio
+                          </a>
+                        )}
                       </div>
                     </div>
                   ))}
@@ -307,6 +337,20 @@ const DoctorPage = () => {
           ))}
         </div>
       </div>
+    {/* Resume Modal */}
+    {resumeModal.isOpen && (
+      <div className="fixed top-0 left-0 w-full h-full bg-gray-900 bg-opacity-50 flex justify-center items-center">
+        <div className="bg-white rounded-lg shadow-lg p-6 w-full h-full">
+          <img src={resumeModal.imageUrl} alt="Resume" className="w-full h-full object-contain" />
+          <button
+            onClick={handleCloseResumeModal}
+            className="absolute top-4 right-4 text-gray-600 hover:text-gray-900 transition duration-300"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    )}
     </div>
   );
 };

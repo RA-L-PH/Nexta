@@ -20,7 +20,7 @@ import { signOutUser } from "./firebase/auth";
 import { AuthContext } from "./contexts/authContext";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
+import { GoOrganization } from "react-icons/go";
 import CardiologyPage from './pages/CardiologyPage'
 import DermatologyPage from './pages/DermatologyPage'
 import GynecologyPage from './pages/GynecologyPage'
@@ -29,6 +29,7 @@ import PediatricsPage from './pages/PediatricsPage'
 import PsychiatryPage from './pages/PsychiatryPage'
 import NeurologyPage from './pages/NeurologyPage'
 import DentistPage from './pages/DentistPage'
+import CompanyPage from './pages/CompanyPage'
 import logo from "../public/logo.png";
 import FreelancerForm from "./pages/FreelancerForm";
 import Checkout from "./pages/Checkout";
@@ -105,6 +106,15 @@ const App = () => {
             </li>
             <li>
               <Link
+                to="/Company"
+                className="flex items-center text-black hover:text-blue-300 transition-colors font-semibold"
+              >
+                <GoOrganization className="mr-2" size={22} />
+                <span className="text-sm uppercase tracking-wide">Company</span>
+              </Link>
+            </li>
+            <li>
+              <Link
                 to="/HireList"
                 className="flex items-center text-black hover:text-blue-300 transition-colors font-semibold"
               >
@@ -168,6 +178,7 @@ const App = () => {
           <Route path="/HireList" element={<UserAppointment />} />
           <Route path="/auth/login" element={<LoginPage />} />
           <Route path="/People" element={<DoctorPage />} />
+          <Route path="/Company" element={<CompanyPage />} />
           <Route path="/People/:specialty" element={<DoctorPage />} />
           <Route path="/admin" element={<AdminDashboard />} />
 
