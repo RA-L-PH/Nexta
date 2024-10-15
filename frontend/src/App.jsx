@@ -18,6 +18,8 @@ import DoctorDetails from "./pages/DoctorDetails";
 import { MdAdminPanelSettings } from "react-icons/md";
 import { signOutUser } from "./firebase/auth";
 import { AuthContext } from "./contexts/authContext";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import CardiologyPage from './pages/CardiologyPage'
 import DermatologyPage from './pages/DermatologyPage'
@@ -74,6 +76,7 @@ const App = () => {
 
   return (
     <BrowserRouter>
+    <ToastContainer />
       <header className="flex justify-between items-center bg-gradient-to-r from-deep-blue to-soft-gray p-4 shadow-lg">
         <div className="flex items-center">
           <Link to="/" className="text-2xl font-bold cursor-pointer">

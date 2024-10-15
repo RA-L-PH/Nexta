@@ -2,16 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDollarSign, faBriefcase, faGraduationCap } from '@fortawesome/free-solid-svg-icons';
-import { collection, getDocs, addDoc } from 'firebase/firestore';
+import { collection, getDocs, addDoc, deleteDoc, doc } from 'firebase/firestore';
 import { getStorage, ref, getDownloadURL } from 'firebase/storage';
 import { MdAddBox, MdCheckBox } from "react-icons/md";
+import { FaLinkedin, FaGithub, FaTwitter } from 'react-icons/fa';
 import { getAuth } from 'firebase/auth';
-import { toast } from 'react-toastify';  // Add this line for Toastr
-import 'react-toastify/dist/ReactToastify.css';  // Add this line for Toastr CSS
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { db } from '../firebase/firebase'; // Adjust the import path if needed
 
 const storage = getStorage();
- // Initialize the Toastr configuration
+const auth = getAuth(); // Initialize Firebase Auth
 
 const DoctorPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -22,7 +23,8 @@ const DoctorPage = () => {
   const [sortOption, setSortOption] = useState('');
   const [doctors, setDoctors] = useState([]);
   const [filteredDoctors, setFilteredDoctors] = useState([]);
-  const [addedToCart, setAddedToCart] = useState([]);  // Add this state to track added doctors
+  const [addedToCart, setAddedToCart] = useState([]);  // Doctors added to cart
+  const [moreInfo, setMoreInfo] = useState({}); // Store whether "More Info" is shown for each doctor
 
   useEffect(() => {
     const fetchDoctors = async () => {
@@ -46,7 +48,21 @@ const DoctorPage = () => {
       }
     };
 
+    const fetchCart = async () => {
+      try {
+        const user = auth.currentUser;
+        if (user) {
+          const cartSnapshot = await getDocs(collection(db, 'users', user.uid, 'cart'));
+          const cartItems = cartSnapshot.docs.map(doc => doc.data().doctorId);
+          setAddedToCart(cartItems);
+        }
+      } catch (error) {
+        console.error("Error fetching cart:", error);
+      }
+    };
+
     fetchDoctors();
+    fetchCart();
   }, []);
 
   useEffect(() => {
@@ -92,43 +108,44 @@ const DoctorPage = () => {
     setFilteredDoctors(filtered);
   }, [searchQuery, minFee, maxFee, minExperience, maxExperience, sortOption, doctors]);
 
-  const addToCart = async (doctorId) => {
+  const toggleCart = async (doctorId) => {
     try {
-      if (!doctorId) {
-        throw new Error('Doctor ID is undefined');
-      }
-  
-      const auth = getAuth();
       const user = auth.currentUser;
-  
       if (!user) {
         throw new Error('User not authenticated');
       }
-  
+
       const userId = user.uid;
       const cartRef = collection(db, 'users', userId, 'cart');
-  
-      await addDoc(cartRef, {
-        doctorId: doctorId,
-        addedAt: new Date()
-      });
-  
-      toast.success('Doctor added to cart successfully!', {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
 
-      setAddedToCart([...addedToCart, doctorId]);  // Mark the doctor as added to cart
+      if (addedToCart.includes(doctorId)) {
+        const doctorInCart = await getDocs(collection(db, 'users', userId, 'cart'));
+        const cartDoc = doctorInCart.docs.find(doc => doc.data().doctorId === doctorId);
+        if (cartDoc) {
+          await deleteDoc(doc(db, 'users', userId, 'cart', cartDoc.id));
+          setAddedToCart(addedToCart.filter(id => id !== doctorId));
+          toast.info('Doctor removed from cart.', { position: "top-right", autoClose: 3000 });
+        }
+      } else {
+        await addDoc(cartRef, {
+          doctorId: doctorId,
+          addedAt: new Date()
+        });
+        setAddedToCart([...addedToCart, doctorId]);
+        toast.success('Doctor added to cart!', { position: "top-right", autoClose: 3000 });
+      }
     } catch (error) {
-      console.error('Error adding doctor to cart:', error);
+      console.error('Error adding/removing doctor to/from cart:', error);
     }
   };
-  
+
+  const toggleMoreInfo = (doctorId) => {
+    setMoreInfo(prevState => ({
+      ...prevState,
+      [doctorId]: !prevState[doctorId]
+    }));
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple-100 to-white py-8 font-sans">
       <div className="container mx-auto px-4">
@@ -182,66 +199,110 @@ const DoctorPage = () => {
             onChange={(e) => setMaxExperience(e.target.value)}
             className="w-30 px-4 py-2 border-2 border-purple-600 rounded-full text-purple-900 focus:outline-none focus:border-purple-800 transition duration-300 ease-in-out"
           />
+        </div>
+
+        {/* Sorting */}
+        <div className="flex justify-center mb-8">
           <select
             value={sortOption}
             onChange={(e) => setSortOption(e.target.value)}
-            className="w-30 px-4 py-2 border-2 border-purple-600 rounded-full text-purple-900 focus:outline-none focus:border-purple-800 transition duration-300 ease-in-out"
+            className="w-1/4 px-4 py-2 border-2 border-purple-600 rounded-full text-purple-900 focus:outline-none focus:border-purple-800 transition duration-300 ease-in-out"
           >
             <option value="">Sort By</option>
             <option value="alphabetical">Alphabetical</option>
             <option value="experience">Experience</option>
-            <option value="hourlyRate">Fee</option>
+            <option value="fee">Fee</option>
           </select>
         </div>
 
         {/* Doctor Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-          {filteredDoctors.map(doctor => (
+          {filteredDoctors.map((doctor) => (
             <motion.div
               key={doctor.id}
-              initial={{ opacity: 0, scale: 0.9 }}
+              initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.3 }}
-              className="bg-white rounded-lg shadow-lg p-6 flex flex-col items-center space-y-4"
+              className="bg-white rounded-lg shadow-lg p-6 text-center border-2 border-purple-300"
             >
-              <button
-                onClick={() => addToCart(doctor.id)}
-                className="absolute top-0 left-0 bg-purple-500 text-white w-8 h-8 flex items-center justify-center rounded"
-              >
-                {addedToCart.includes(doctor.id) ? <MdCheckBox /> : <MdAddBox />}
-              </button>
-              {doctor.freelancerDetails.map((freelancer, index) => (
-                <div key={index} className="flex flex-col items-center text-center space-y-4">
-                  <img
-                    src={freelancer.photoURL}
-                    alt={freelancer.name}
-                    className="w-32 h-32 rounded-full object-cover"
-                  />
-                  <h3 className="text-2xl text-purple-900 font-bold">{freelancer.name}</h3>
-                  <p className="text-gray-700">
-                    <FontAwesomeIcon icon={faGraduationCap} className="mr-2 text-purple-600" />
-                    {freelancer.qualification}
-                  </p>
-                  <p className="text-gray-700">
-                    <FontAwesomeIcon icon={faGraduationCap} className="mr-2 text-purple-600" />
-                    {freelancer.skills}
-                  </p>
-                  <p className="text-purple-600 font-semibold">
-                    <FontAwesomeIcon icon={faDollarSign} className="mr-1" />
-                    {freelancer.hourlyRate} / hr
-                  </p>
-                  <p className="text-gray-700">
-                    <FontAwesomeIcon icon={faBriefcase} className="mr-2 text-purple-600" />
-                    {freelancer.experience} years
-                  </p>
-                  <button className="mt-4 bg-purple-600 text-white py-2 px-4 rounded-lg">
-                    View More
-                  </button>
-                  <p className="mt-2 inline-block bg-gray-200 text-gray-700 py-1 px-3 rounded-full text-sm">
-                    {freelancer.workingType}
-                  </p>
-                </div>
+              {doctor.freelancerDetails.map((freelancer) => (
+                <img
+                  key={freelancer.photoURL}
+                  src={freelancer.photoURL}
+                  alt="Doctor's profile"
+                  className="w-32 h-32 object-cover rounded-full mx-auto mb-4"
+                />
               ))}
+              <h3 className="text-lg font-semibold text-gray-800">{doctor.name}</h3>
+              <p className="text-gray-600">
+                <FontAwesomeIcon icon={faGraduationCap} className="mr-2" />
+                {doctor.freelancerDetails.map((freelancer) => freelancer.qualification).join(', ')}
+              </p>
+              <p className="text-gray-600">
+                <FontAwesomeIcon icon={faBriefcase} className="mr-2" />
+                {doctor.freelancerDetails.map((freelancer) => freelancer.experience).join(', ')} years experience
+              </p>
+              <p className="text-gray-600">
+                <FontAwesomeIcon icon={faDollarSign} className="mr-2" />
+                {doctor.freelancerDetails.map((freelancer) => freelancer.hourlyRate).join(', ')} / hour
+              </p>
+
+              {/* More Info Button */}
+              <button
+                onClick={() => toggleMoreInfo(doctor.id)}
+                className="w-full px-4 py-2 mt-2 text-purple-600 border-2 border-purple-600 rounded-full hover:bg-purple-100 transition duration-300"
+              >
+                {moreInfo[doctor.id] ? 'Hide Info' : 'More Info'}
+              </button>
+
+              {moreInfo[doctor.id] && (
+                <div className="mt-4 text-left">
+                  <p className="text-gray-600">
+                    <strong>Skills:</strong>{' '}
+                    {doctor.freelancerDetails.map((freelancer) => freelancer.skills).join(', ')}
+                  </p>
+
+                  {/* Social Profiles */}
+                  {doctor.freelancerDetails.map((freelancer, index) => (
+                    <div key={index} className="mt-4">
+                      <h3 className="text-2xl font-bold text-gray-700">Social Profiles</h3>
+                      <div className="flex gap-4">
+                        {freelancer.linkedin && (
+                          <a href={freelancer.linkedin} className="text-lg text-gray-600" target="_blank" rel="noopener noreferrer">
+                            <FaLinkedin size={24} />
+                          </a>
+                        )}
+                        {freelancer.github && (
+                          <a href={freelancer.github} className="text-lg text-gray-600" target="_blank" rel="noopener noreferrer">
+                            <FaGithub size={24} />
+                          </a>
+                        )}
+                        {freelancer.twitter && (
+                          <a href={freelancer.twitter} className="text-lg text-gray-600" target="_blank" rel="noopener noreferrer">
+                            <FaTwitter size={24} />
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+
+              {/* Add to Cart Button */}
+              <button
+                onClick={() => toggleCart(doctor.id)}
+                className={`w-full px-4 py-2 mt-4 rounded-full ${
+                  addedToCart.includes(doctor.id) ? 'bg-green-500' : 'bg-purple-600'
+                } text-white hover:bg-purple-700 transition duration-300`}
+              >
+                {addedToCart.includes(doctor.id) ? (
+                  <MdCheckBox size={24} className="inline-block mr-2" />
+                ) : (
+                  <MdAddBox size={24} className="inline-block mr-2" />
+                )}
+                {addedToCart.includes(doctor.id) ? 'Added' : 'Add to Cart'}
+              </button>
             </motion.div>
           ))}
         </div>
