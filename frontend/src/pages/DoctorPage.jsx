@@ -4,12 +4,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDollarSign, faBriefcase, faGraduationCap } from '@fortawesome/free-solid-svg-icons';
 import { collection, getDocs, addDoc } from 'firebase/firestore';
 import { getStorage, ref, getDownloadURL } from 'firebase/storage';
-import { MdAddBox,MdCheckBox } from "react-icons/md";
+import { MdAddBox, MdCheckBox } from "react-icons/md";
 import { getAuth } from 'firebase/auth';
+import { toast } from 'react-toastify';  // Add this line for Toastr
+import 'react-toastify/dist/ReactToastify.css';  // Add this line for Toastr CSS
 import { db } from '../firebase/firebase'; // Adjust the import path if needed
 
-
 const storage = getStorage();
+ // Initialize the Toastr configuration
 
 const DoctorPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -20,7 +22,7 @@ const DoctorPage = () => {
   const [sortOption, setSortOption] = useState('');
   const [doctors, setDoctors] = useState([]);
   const [filteredDoctors, setFilteredDoctors] = useState([]);
-  
+  const [addedToCart, setAddedToCart] = useState([]);  // Add this state to track added doctors
 
   useEffect(() => {
     const fetchDoctors = async () => {
@@ -111,7 +113,17 @@ const DoctorPage = () => {
         addedAt: new Date()
       });
   
-      console.log('Doctor added to cart successfully');
+      toast.success('Doctor added to cart successfully!', {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+
+      setAddedToCart([...addedToCart, doctorId]);  // Mark the doctor as added to cart
     } catch (error) {
       console.error('Error adding doctor to cart:', error);
     }
@@ -192,11 +204,11 @@ const DoctorPage = () => {
               transition={{ duration: 0.3 }}
               className="bg-white rounded-lg shadow-lg p-6 flex flex-col items-center space-y-4"
             >
-            <button
+              <button
                 onClick={() => addToCart(doctor.id)}
                 className="absolute top-0 left-0 bg-purple-500 text-white w-8 h-8 flex items-center justify-center rounded"
               >
-                <MdAddBox />
+                {addedToCart.includes(doctor.id) ? <MdCheckBox /> : <MdAddBox />}
               </button>
               {doctor.freelancerDetails.map((freelancer, index) => (
                 <div key={index} className="flex flex-col items-center text-center space-y-4">
@@ -233,8 +245,8 @@ const DoctorPage = () => {
             </motion.div>
           ))}
         </div>
-        </div>
       </div>
+    </div>
   );
 };
 

@@ -13,7 +13,7 @@ import doc10 from '../assets/sam.jpg';
 import doc11 from '../assets/na.jpg';
 import doc12 from '../assets/bb.jpg';
 import { BiFileFind } from "react-icons/bi";
-import logo from "../assets/Designer (1).png";
+import logo from "../assets/logo.png";
 
 import '@fontsource/poppins/400.css'; // Weight 400
 import '@fontsource/poppins/700.css';

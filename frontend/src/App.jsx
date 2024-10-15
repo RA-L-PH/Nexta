@@ -27,7 +27,7 @@ import PediatricsPage from './pages/PediatricsPage'
 import PsychiatryPage from './pages/PsychiatryPage'
 import NeurologyPage from './pages/NeurologyPage'
 import DentistPage from './pages/DentistPage'
-import logo from "./assets/Designer (1).png";
+import logo from "../public/logo.png";
 import FreelancerForm from "./pages/FreelancerForm";
 import Checkout from "./pages/Checkout";
 
