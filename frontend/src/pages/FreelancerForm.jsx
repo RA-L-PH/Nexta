@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { Form, FormControl } from "@/components/ui/form";
 import { FaUser , FaEnvelope, FaDollarSign, FaBriefcase, FaLaptopCode, FaLinkedin, FaGithub, FaTwitter, FaFileAlt } from 'react-icons/fa';
 import { MdLocationOn, MdContactPhone } from 'react-icons/md';
-
+import { FaRegFileCode } from "react-icons/fa6";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from 'react-router-dom';
@@ -49,6 +49,7 @@ const FreelancerContent = () => {
       linkedin: "",
       github: "",
       twitter: "",
+      portfolioURL: "",
     },
   });
   
@@ -71,7 +72,7 @@ const FreelancerContent = () => {
 
     const {
       name, email, photoFile, resumeFile, address, mobileNo, skills, qualification,
-      hourlyRate, experience, workingType, linkedin, github, twitter
+      hourlyRate, experience, workingType, linkedin, github, twitter, portfolioURL
     } = values;
 
     const saveFreelancer = async () => {
@@ -90,7 +91,7 @@ const FreelancerContent = () => {
 
         await addDoc(freelancersRef, {
           name, email, photoFile: photoUrl, resumeFile: resumeUrl, address, mobileNo, skills, qualification,
-          hourlyRate, experience, workingType, linkedin, github, twitter
+          hourlyRate, experience, workingType, linkedin, github, twitter, portfolioURL
         });
 
         toast.success("Freelancer profile created successfully!");
@@ -245,6 +246,14 @@ const FreelancerContent = () => {
                 label="Twitter Profile"
                 placeholder="https://twitter.com/your-profile"
                 icon={<FaTwitter className="text-violet-500" />}
+              />
+              <CustomFormField
+                fieldType={FormFieldType.INPUT}
+                control={form.control}
+                name="portfolioURL"
+                label="Portfolio Link (Optional)"
+                placeholder="https://twitter.com/your-profile"
+                icon={<FaRegFileCode className="text-violet-500" />}
               />
             </section>
 

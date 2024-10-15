@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDollarSign, faBriefcase, faGraduationCap } from '@fortawesome/free-solid-svg-icons';
 import { collection, getDocs, addDoc, deleteDoc, doc } from 'firebase/firestore';
 import { getStorage, ref, getDownloadURL } from 'firebase/storage';
-import { MdAddBox, MdCheckBox } from "react-icons/md";
-import { FaLinkedin, FaGithub, FaTwitter, FaFileAlt, FaBriefcase } from 'react-icons/fa';
+import { MdAddBox, MdCheckBox, MdClose, MdDownload } from "react-icons/md";
+import { FaLinkedin, FaGithub, FaTwitter, FaFileAlt } from 'react-icons/fa';
+import { FaRegFileCode } from "react-icons/fa6";
 import { getAuth } from 'firebase/auth';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -160,6 +161,13 @@ const DoctorPage = () => {
     setResumeModal({ isOpen: false, imageUrl: '' });
   };
 
+  const handleDownloadResume = () => {
+    const link = document.createElement('a');
+    link.href = resumeModal.imageUrl;
+    link.download = 'resume.pdf';
+    link.click();
+  };
+
   
 
   return (
@@ -308,8 +316,7 @@ const DoctorPage = () => {
                         )}
                         {freelancer.portfolioURL && (
                           <a href={freelancer.portfolioURL } className="text-lg text-gray-600" target="_blank" rel="noopener noreferrer">
-                            <FaBriefcase size={24} />
-                            View Portfolio
+                            <FaRegFileCode size={24} />
                           </a>
                         )}
                       </div>
@@ -338,19 +345,27 @@ const DoctorPage = () => {
         </div>
       </div>
     {/* Resume Modal */}
-    {resumeModal.isOpen && (
-      <div className="fixed top-0 left-0 w-full h-full bg-gray-900 bg-opacity-50 flex justify-center items-center">
-        <div className="bg-white rounded-lg shadow-lg p-6 w-full h-full">
-          <img src={resumeModal.imageUrl} alt="Resume" className="w-full h-full object-contain" />
-          <button
-            onClick={handleCloseResumeModal}
-            className="absolute top-4 right-4 text-gray-600 hover:text-gray-900 transition duration-300"
-          >
-            Close
-          </button>
+      {resumeModal.isOpen && (
+        <div className="fixed top-0 left-0 w-full h-full bg-gray-900 bg-opacity-50 flex justify-center items-center">
+          <div className="bg-white rounded-lg shadow-lg p-6 relative w-4/12">
+            <div className="flex justify-between items-center mb-4">
+              <button
+                onClick={handleCloseResumeModal}
+                className="text-red-600 hover:text-red-900 transition duration-300"
+              >
+                <MdClose size={24} />
+              </button>
+              <button
+                onClick={handleDownloadResume}
+                className="text-blue-500 hover:text-blue-700 transition duration-300"
+              >
+                <MdDownload size={24} />
+              </button>
+            </div>
+            <img src={resumeModal.imageUrl} alt="Resume" className="w-full h-full object-contain" />
+          </div>
         </div>
-      </div>
-    )}
+      )}
     </div>
   );
 };
