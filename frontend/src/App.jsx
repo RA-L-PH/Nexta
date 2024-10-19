@@ -22,6 +22,7 @@ import CompanyPage from './pages/CompanyPage'
 import logo from "../public/logo.png";
 import FreelancerForm from "./pages/FreelancerForm";
 import Checkout from "./pages/Checkout";
+import JobPage from "./pages/JobPage";
 
 // PrivateRoute Component
 const PrivateRoute = ({ children, isAuthenticated }) => {
@@ -85,7 +86,7 @@ const App = () => {
             </li>
             <li>
               <Link
-                to="/"
+                to="/JobPage"
                 className="flex items-center text-black hover:text-blue-300 transition-colors font-semibold"
               >
                 <FaBriefcase className="mr-2 stroke-2" size={22} />
@@ -176,6 +177,7 @@ const App = () => {
           <Route path="/auth/login" element={<LoginPage />} />
           <Route path="/People" element={<DoctorPage />} />
           <Route path="/Company" element={<CompanyPage />} />
+          <Route path="/JobPage" element={<JobPage />} />
 
 
           <Route path="/myProfile/*" element={<ProfilePage />} />

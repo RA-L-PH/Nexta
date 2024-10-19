@@ -32,7 +32,7 @@ const UserAppointment = () => {
 
             // Fetch doctor details using doctorId
             const doctorRef = doc(db, 'users', doctorId); // Correct usage of doc()
-            const freelancerSubRef = collection(doctorRef, 'freelancer'); // Subcollection inside doctor's document
+            const freelancerSubRef = collection(doctorRef, 'Freelancer'); // Subcollection inside doctor's document
             const doctorDetailsSnap = await getDocs(freelancerSubRef);
 
             // Assuming only one document in 'freelancer' subcollection, we take the first one

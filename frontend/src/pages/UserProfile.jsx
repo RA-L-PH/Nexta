@@ -21,7 +21,7 @@ function UserProfile() {
       if (userId) {
         try {
           const userRef = doc(db, 'users', userId);
-          const freelancersRef = collection(userRef, 'freelancer');
+          const freelancersRef = collection(userRef, 'Freelancer');
           const freelancerSnap = await getDocs(freelancersRef);
 
           const freelancerDetails = [];

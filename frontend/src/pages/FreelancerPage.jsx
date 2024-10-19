@@ -34,7 +34,7 @@ const DoctorPage = () => {
         const querySnapshot = await getDocs(collection(db, 'users'));
         const doctorsList = await Promise.all(querySnapshot.docs.map(async (doc) => {
           const userData = { id: doc.id, ...doc.data() };
-          const freelancerSnapshot = await getDocs(collection(db, 'users', doc.id, 'freelancer'));
+          const freelancerSnapshot = await getDocs(collection(db, 'users', doc.id, 'Freelancer'));
           const freelancerDetails = await Promise.all(freelancerSnapshot.docs.map(async (freelancerDoc) => {
             const data = freelancerDoc.data();
             const photoRef = ref(storage, data.photoFile);
@@ -93,6 +93,8 @@ const DoctorPage = () => {
     if (maxExperience) filtered = filtered.filter(doctor => 
       doctor.freelancerDetails.some(freelancer => freelancer.experience <= parseInt(maxExperience))
     );
+
+    filtered = filtered.filter(doctor => doctor.role === 'User');
   
     if (sortOption === 'alphabetical') {
       filtered.sort((a, b) => a.name.localeCompare(b.name));

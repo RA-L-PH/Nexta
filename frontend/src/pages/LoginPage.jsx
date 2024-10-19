@@ -29,10 +29,10 @@ function LoginPageContent() {
   const [name, setName] = useState('')
   const [showOtpCard, setShowOtpCard] = useState(false);
   const [adminHasEnteredOtp, setAdminHasEnteredOtp] = useState(false);
-  const [selectedTab, setSelectedTab] = useState('patient');
+  const [selectedTab, setSelectedTab] = useState('Company');
   const [isLogin, setIsLogin] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
-  const [localUserRole, setLocalUserRole] = useState('patient');
+  const [localUserRole, setLocalUserRole] = useState('Company');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -230,8 +230,8 @@ function LoginPageContent() {
                 Continue with Google
               </Button>
               <Tabs defaultValue="Company" className="w-full" onValueChange={handleTabChange}>
-                <TabsList className="grid w-full grid-cols-3 gap-3 bg-gray-100 p-2 rounded-lg h-18">
-                  <TabsTrigger value="patient" className="py-2 text-sm font-medium transition-all duration-300 data-[state=active]:bg-white data-[state=active]:text-[#8891e2] data-[state=active]:shadow-md rounded-md hover:bg-gray-200">
+                <TabsList className="grid w-full grid-cols-2 gap-3 bg-gray-100 p-2 rounded-lg h-18">
+                  <TabsTrigger value="Company" className="py-2 text-sm font-medium transition-all duration-300 data-[state=active]:bg-white data-[state=active]:text-[#8891e2] data-[state=active]:shadow-md rounded-md hover:bg-gray-200">
                     <GoOrganization className="mr-2 text-lg" />
                     Company
                   </TabsTrigger>
