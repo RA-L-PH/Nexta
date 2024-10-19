@@ -54,7 +54,7 @@ function UserProfile() {
   const handleSave = async () => {
     try {
       const userRef = doc(db, 'users', userId);
-      const freelancerRef = doc(collection(userRef, 'freelancer'), freelancerData[0].id);
+      const freelancerRef = doc(collection(userRef, 'Freelancer'), freelancerData[0].id);
       await updateDoc(freelancerRef, editedData);
       setFreelancerData([{ ...freelancerData[0], ...editedData }]);
       setEditMode(false);

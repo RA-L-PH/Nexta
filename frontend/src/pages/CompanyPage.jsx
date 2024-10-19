@@ -1,182 +1,255 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { FaLinkedin, FaGithub, FaTwitter } from 'react-icons/fa';
-import { MdOpenInNew } from 'react-icons/md';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faInfoCircle, faGlobe, faEnvelope, faPhone } from '@fortawesome/free-solid-svg-icons';
+import { GiPaperClip } from "react-icons/gi";
+import { collection, getDocs, doc, setDoc } from 'firebase/firestore';
 import { getStorage, ref, getDownloadURL } from 'firebase/storage';
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { MdOutlineMiscellaneousServices } from "react-icons/md";
+import { db } from '../firebase/firebase'; // Adjust the import path if needed
+import { getAuth } from 'firebase/auth';
 
-const presumedCompaniesData = [
-  {
-    id: 'company1',
-    name: 'Tech Innovators',
-    industry: 'Software Development',
-    teamSize: 50,
-    hourlyRate: '$120',
-    logoUrl: 'https://example.com/logos/tech-innovators-logo.png',
-    linkedin: 'https://linkedin.com/company/tech-innovators',
-    github: 'https://github.com/tech-innovators',
-    twitter: 'https://twitter.com/tech_innovators',
-    portfolioLink: 'https://tech-innovators.com/portfolio',
-    documentFile: 'company1/proposal.pdf',
-  },
-  {
-    id: 'company2',
-    name: 'Design Studio X',
-    industry: 'Graphic Design',
-    teamSize: 25,
-    hourlyRate: '$85',
-    logoUrl: 'https://example.com/logos/design-studio-x-logo.png',
-    linkedin: 'https://linkedin.com/company/design-studio-x',
-    github: '',
-    twitter: 'https://twitter.com/design_studio_x',
-    portfolioLink: 'https://designstudiox.com/works',
-    documentFile: 'company2/brochure.pdf',
-  },
-  {
-    id: 'company3',
-    name: 'Marketing Masters',
-    industry: 'Digital Marketing',
-    teamSize: 100,
-    hourlyRate: '$150',
-    logoUrl: 'https://example.com/logos/marketing-masters-logo.png',
-    linkedin: 'https://linkedin.com/company/marketing-masters',
-    github: '',
-    twitter: 'https://twitter.com/marketing_masters',
-    portfolioLink: '',
-    documentFile: 'company3/marketing-strategy.pdf',
-  },
-  {
-    id: 'company4',
-    name: 'Green Energy Solutions',
-    industry: 'Renewable Energy',
-    teamSize: 200,
-    hourlyRate: '$200',
-    logoUrl: 'https://example.com/logos/green-energy-logo.png',
-    linkedin: 'https://linkedin.com/company/green-energy-solutions',
-    github: 'https://github.com/green-energy-solutions',
-    twitter: '',
-    portfolioLink: 'https://greenenergysolutions.com/case-studies',
-    documentFile: 'company4/company-overview.pdf',
-  },
-];
+const auth = getAuth();
+const currentUser = auth.currentUser;
 
-const CompanyPage = () => {
-  const [companies, setCompanies] = useState([]);
-  const [resumeUrl, setResumeUrl] = useState(''); // Store resume URL for viewing
-  const storage = getStorage();
+const storage = getStorage();
+
+const DoctorPage = () => {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [sortOption, setSortOption] = useState('');
+  const [doctors, setDoctors] = useState([]);
+  const [filteredDoctors, setFilteredDoctors] = useState([]);
+  const [moreInfoPopup, setMoreInfoPopup] = useState({ isOpen: false, doctor: null });
 
   useEffect(() => {
-    // Load presumed data for testing
-    setCompanies(presumedCompaniesData);
+    const fetchDoctors = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, 'users'));
+        const doctorsList = await Promise.all(querySnapshot.docs.map(async (doc) => {
+          const userData = { id: doc.id, ...doc.data() };
+          const freelancerSnapshot = await getDocs(collection(db, 'users', doc.id, 'Companies'));
+          const freelancerDetails = await Promise.all(freelancerSnapshot.docs.map(async (freelancerDoc) => {
+            const data = freelancerDoc.data();
+            const photoRef = ref(storage, data.logoFile);
+            const photoURL = await getDownloadURL(photoRef);
+            return { ...data, photoURL };
+          }));
+          return { ...userData, freelancerDetails };
+        }));
+        setDoctors(doctorsList);
+        setFilteredDoctors(doctorsList);
+      } catch (error) {
+        console.error("Error fetching doctors: ", error);
+      }
+    };
+
+    fetchDoctors();
   }, []);
 
-  const handleViewResume = async (documentFile) => {
-    try {
-      const resumeRef = ref(storage, documentFile);
-      const resumeURL = await getDownloadURL(resumeRef);
-      setResumeUrl(resumeURL);
-      window.open(resumeURL, '_blank');
-    } catch (error) {
-      toast.error('Error fetching resume. Please try again later.');
+  useEffect(() => {
+    let filtered = doctors.filter(doctor => 
+      (doctor.name?.toLowerCase().includes(searchQuery.toLowerCase()) || 
+      doctor.freelancerDetails.some(freelancer => 
+        freelancer.qualification?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        freelancer.skills?.toLowerCase().includes(searchQuery.toLowerCase())
+      ))
+    );
+
+    filtered = filtered.filter(doctor => doctor.role === 'Company');
+  
+    if (sortOption === 'alphabetical') {
+      filtered.sort((a, b) => a.name.localeCompare(b.name));
+    } 
+    else if (sortOption === 'experience') {
+      filtered.sort((a, b) => {
+        const aExperience = Math.max(...a.freelancerDetails.map(f => f.experience));
+        const bExperience = Math.max(...b.freelancerDetails.map(f => f.experience));
+        return bExperience - aExperience;
+      });
     }
+    else if (sortOption === 'fee'){
+      filtered.sort((a, b) => {
+        const aFee = Math.min(...a.freelancerDetails.map(f => f.hourlyRate));
+        const bFee = Math.min(...b.freelancerDetails.map(f => f.hourlyRate));
+        return aFee - bFee;
+      });
+    }
+  
+    setFilteredDoctors(filtered);
+  }, [searchQuery, sortOption, doctors]);
+
+  const handleInfoPopup = (doctor) => {
+    setMoreInfoPopup({ isOpen: true, doctor });
   };
 
+  const closeInfoPopup = () => {
+    setMoreInfoPopup({ isOpen: false, doctor: null });
+  };
+
+  const handleApply = async (freelancer) => {
+    const userId = currentUser ? currentUser.uid : null; // Get current user ID
+    
+    if (!userId) {
+      alert('Please log in to apply.');
+      return;
+    }
+  
+    const applicationData = {
+      companyName: freelancer.companyName,
+      ID: freelancer.id,
+      appliedAt: new Date(),
+    };
+  
+    try {
+      await setDoc(doc(collection(db, 'users', userId, 'applications'), freelancer.companyName), applicationData);
+      alert('Application submitted successfully!');
+    } catch (error) {
+      console.error("Error submitting application: ", error);
+      alert('Failed to submit application. Please try again later.');
+    }
+  };
+  
   return (
-    <div className="min-h-screen bg-gradient-to-b from-green-100 to-white py-8 font-sans">
+    <div className="min-h-screen bg-gradient-to-b from-purple-100 to-white py-8 font-sans">
       <div className="container mx-auto px-4">
         <motion.h1
           initial={{ opacity: 0, y: -50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="text-5xl text-green-900 font-extrabold mb-8 text-center"
+          className="text-5xl text-purple-900 font-extrabold mb-8 text-center"
         >
-          Discover Top Companies
+          Hire talent that moves your company forward.
         </motion.h1>
 
+        {/* Search Bar */}
+        <div className="flex justify-center mb-8">
+          <input
+            type="text"
+            placeholder="Search by name, specialty, or skills..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-1/2 px-4 py-2 border-2 border-purple-600 rounded-full text-purple-900 focus:outline-none focus:border-purple-800 transition duration-300 ease-in-out"
+          />
+        </div>
+
+        {/* Sorting */}
+        <div className="flex justify-center mb-8">
+          <select
+            value={sortOption}
+            onChange={(e) => setSortOption(e.target.value)}
+            className="w-1/4 px-4 py-2 border-2 border-purple-600 rounded-full text-purple-900 focus:outline-none focus:border-purple-800 transition duration-300 ease-in-out"
+          >
+            <option value="">Sort By</option>
+            <option value="alphabetical">Alphabetical</option>
+            <option value="experience">Experience</option>
+            <option value="fee">Fee</option>
+          </select>
+        </div>
+
+        {/* Doctor Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-          {companies.map((company) => (
+          {filteredDoctors.map((doctor) => (
             <motion.div
-              key={company.id}
+              key={doctor.id}
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.3 }}
-              className="bg-white rounded-lg shadow-lg p-6 text-center border-2 border-green-300"
+              className="bg-white rounded-lg shadow-lg p-6 text-center border-2 border-purple-300 relative"
             >
-              <img
-                src={company.logoUrl}
-                alt={`${company.name} logo`}
-                className="w-32 h-32 object-cover rounded-full mx-auto mb-4"
+              {/* Info Icon */}
+              <FontAwesomeIcon
+                icon={faInfoCircle}
+                className="absolute top-4 right-4 text-purple-600 cursor-pointer"
+                onClick={() => handleInfoPopup(doctor)}
               />
-              <h3 className="text-lg font-semibold text-gray-800">{company.name}</h3>
-              <p className="text-gray-600">{company.industry}</p>
-              <p className="text-gray-600">Team Size: {company.teamSize}</p>
-              <p className="text-gray-600">Hourly Rate: {company.hourlyRate}</p>
 
-              {/* Social Links */}
-              <div className="flex justify-center mt-4 gap-4">
-                {company.linkedin && (
-                  <a
-                    href={company.linkedin}
-                    className="text-lg text-gray-600"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <FaLinkedin size={24} />
-                  </a>
-                )}
-                {company.github && (
-                  <a
-                    href={company.github}
-                    className="text-lg text-gray-600"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <FaGithub size={24} />
-                  </a>
-                )}
-                {company.twitter && (
-                  <a
-                    href={company.twitter}
-                    className="text-lg text-gray-600"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <FaTwitter size={24} />
-                  </a>
-                )}
-              </div>
-
-              {/* Portfolio & Resume */}
-              <div className="flex justify-center mt-4 gap-4">
-                {/* Portfolio Link */}
-                {company.portfolioLink ? (
-                  <a
-                    href={company.portfolioLink}
-                    className="text-lg text-green-600"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <MdOpenInNew size={24} />
-                  </a>
-                ) : (
-                  <MdOpenInNew size={24} className="text-gray-400" />
-                )}
-
-                {/* View Resume */}
-                <button
-                  onClick={() => handleViewResume(company.documentFile)}
-                  className="text-lg text-green-600"
-                >
-                  <MdOpenInNew size={24} />
-                </button>
-              </div>
+              {doctor.freelancerDetails.map((freelancer) => (
+                <img
+                  key={freelancer.photoURL}
+                  src={freelancer.photoURL}
+                  alt="Doctor's profile"
+                  className="w-32 h-32 object-cover rounded-full mx-auto mb-4"
+                />
+              ))}
+              <h3 className="text-lg font-semibold text-gray-800">{doctor.freelancerDetails.map((freelancer) => freelancer.companyName).join(', ')}</h3>
+              <p className="text-gray-600">
+                    <span className="flex items-center justify-center">
+                    <MdOutlineMiscellaneousServices className="mr-2 text-xl"/>
+                    {doctor.freelancerDetails.map((freelancer) => freelancer.productsServices).join(', ')}
+                    </span>
+                </p>
+                <p className="text-gray-600">
+                    <span className="flex items-center justify-center">
+                    <GiPaperClip className="mr-2 text-xl"/>
+                    {doctor.freelancerDetails.map((freelancer) => freelancer.missionStatement).join(', ')}
+                    </span>
+                </p>
             </motion.div>
           ))}
         </div>
       </div>
+
+      {/* More Info Popup */}
+      {moreInfoPopup.isOpen && moreInfoPopup.doctor && (
+  <div className="fixed top-0 left-0 w-full h-full bg-gray-900 bg-opacity-50 flex justify-center items-center">
+    <div className="bg-white rounded-lg shadow-lg p-6 relative w-4/12">
+      <button
+        onClick={closeInfoPopup}
+        className="absolute top-4 right-4 text-red-600 hover:text-red-900 transition duration-300"
+      >
+        &times;
+      </button>
+
+      {moreInfoPopup.doctor.freelancerDetails.map((freelancer) => (
+        <div key={freelancer.photoURL}>
+          <h2 className="text-2xl font-bold mb-4 text-gray-700">{freelancer.companyName}</h2>
+          <p><strong>Company Address:</strong> {freelancer.companyAddress}</p>
+          <p><strong>History:</strong> {freelancer.companyHistory}</p>
+          <p><strong>Mission Statement:</strong> {freelancer.missionStatement}</p>
+
+          {/* Contact Information */}
+          <div className="mt-4">
+            <h3 className="text-xl font-bold text-gray-700">Contact Information</h3>
+            <div className="flex gap-4 mt-2">
+              {/* Phone Icon */}
+              {freelancer.phoneNumber && (
+                <a href={`tel:${freelancer.phoneNumber}`} className="text-lg text-gray-600" target="_blank" rel="noopener noreferrer">
+                  <FontAwesomeIcon icon={faPhone} size="lg" />
+                </a>
+              )}
+              
+              {/* Email Icon */}
+              {freelancer.email && (
+                <a href={`mailto:${freelancer.email}`} className="text-lg text-gray-600" target="_blank" rel="noopener noreferrer">
+                  <FontAwesomeIcon icon={faEnvelope} size="lg" />
+                </a>
+              )}
+              
+              {/* Website Icon */}
+              {freelancer.websiteURL && (
+                <a href={freelancer.websiteURL} className="text-lg text-gray-600" target="_blank" rel="noopener noreferrer">
+                  <FontAwesomeIcon icon={faGlobe} size="lg" />
+                </a>
+              )}
+            </div>
+          </div>
+          {/* Apply Button */}
+          <div className="mt-4">
+                  <button
+                    onClick={() => handleApply(freelancer)}
+                    className="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-700  transition duration-300"
+                  >
+                    Apply Now!
+                  </button>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+)}
+
     </div>
   );
 };
 
-export default CompanyPage;
+export default DoctorPage;
