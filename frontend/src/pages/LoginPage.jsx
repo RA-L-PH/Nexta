@@ -70,7 +70,7 @@ function LoginPageContent() {
           navigate('/');
         } else {
           toast.success('Logged in successfully!');
-          navigate(localUserRole === 'patient' ? '/RegistrationCompany' : '/RegistrationUser');
+          navigate(localUserRole === 'Company' ? '/RegistrationCompany' : '/RegistrationUser');
         }
   
       } else {
@@ -89,7 +89,7 @@ function LoginPageContent() {
         // setUserRole(localUserRole);
         login(userData)
         toast.success('Signed up successfully!');
-        navigate(localUserRole === 'patient' ? '/RegistrationCompany' : '/RegistrationUser');
+        navigate(localUserRole === 'Company' ? '/RegistrationCompany' : '/RegistrationUser');
       }
       setIsUserLoggedIn(true);
     } catch (error) {
@@ -128,7 +128,7 @@ function LoginPageContent() {
         login(userData)
         // setUserRole(localUserRole);
         toast.success('Logged in with Google successfully!');
-        navigate(localUserRole === 'patient' ? '/RegistrationCompany' : '/RegistrationUser');
+        navigate(localUserRole === 'Company' ? '/RegistrationCompany' : '/RegistrationUser');
       }
       setIsUserLoggedIn(true);
     } catch (error) {
@@ -229,24 +229,17 @@ function LoginPageContent() {
                 <FcGoogle className="mr-2" />
                 Continue with Google
               </Button>
-              <Tabs defaultValue="patient" className="w-full" onValueChange={handleTabChange}>
+              <Tabs defaultValue="Company" className="w-full" onValueChange={handleTabChange}>
                 <TabsList className="grid w-full grid-cols-3 gap-3 bg-gray-100 p-2 rounded-lg h-18">
                   <TabsTrigger value="patient" className="py-2 text-sm font-medium transition-all duration-300 data-[state=active]:bg-white data-[state=active]:text-[#8891e2] data-[state=active]:shadow-md rounded-md hover:bg-gray-200">
                     <GoOrganization className="mr-2 text-lg" />
                     Company
                   </TabsTrigger>
-                  <TabsTrigger value="doctor" className="py-2 text-sm font-medium transition-all duration-300 data-[state=active]:bg-white data-[state=active]:text-[#8891e2] data-[state=active]:shadow-md rounded-md hover:bg-gray-200">
+                  <TabsTrigger value="User" className="py-2 text-sm font-medium transition-all duration-300 data-[state=active]:bg-white data-[state=active]:text-[#8891e2] data-[state=active]:shadow-md rounded-md hover:bg-gray-200">
                     <FaUserTie className="mr-2 text-lg" />
                     User
                   </TabsTrigger>
-                  <TabsTrigger value="admin" className="py-2 text-sm font-medium transition-all duration-300 data-[state=active]:bg-white data-[state=active]:text-[#8891e2] data-[state=active]:shadow-md rounded-md hover:bg-gray-200">
-                    <FaUserCog className="mr-2 text-lg" />
-                    Admin
-                  </TabsTrigger>
                 </TabsList>
-                <TabsContent value="admin" className="mt-6">
-                  {showOtpCard && <OtpCard className="bg-white shadow-lg rounded-lg p-6" />}
-                </TabsContent>
               </Tabs>
             </CardFooter>
             <div className="bg-gray-100 p-6 -mt-4 rounded-b-lg">
@@ -270,11 +263,7 @@ function LoginPageContent() {
           >
             <img
               src={
-                selectedTab === 'patient'
-                  ? "/patient-img.png"
-                  : selectedTab === 'admin'
-                  ? "/admin-img.png"
-                  : "/doctor-img.png"
+                  "/patient-img.png"
               }
               alt={`${selectedTab} Login`}
               className="w-full h-full object-cover object-center rounded-lg"

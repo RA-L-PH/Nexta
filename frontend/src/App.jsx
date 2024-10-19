@@ -3,37 +3,25 @@ import { Button } from "./components/ui/button";
 import { BrowserRouter, Link, Route, Routes, Navigate } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import UserAppointment from "./pages/UserAppointment";
-import DoctorPage from "./pages/DoctorPage";
+import DoctorPage from "./pages/FreelancerPage";
 import LoginPage from "./pages/LoginPage";
-import FormPage from "./pages/FormPage";
+import CompanyForm from "./pages/CompanyForm";
 import ProfilePage from "./pages/ProfilePage";
-import DoctorForm from "./pages/FreelancerForm";
-import Calling from "./pages/room";
-import AdminDashboard from "./pages/AdminDashboard";
 import { Home, LogIn } from "lucide-react";
 import { FaUserCircle } from "react-icons/fa";
 import { FaUserTie } from "react-icons/fa";
+import { FaBriefcase } from "react-icons/fa6";
 import { CiViewList } from "react-icons/ci";
-import DoctorDetails from "./pages/DoctorDetails";
 import { MdAdminPanelSettings } from "react-icons/md";
 import { signOutUser } from "./firebase/auth";
 import { AuthContext } from "./contexts/authContext";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { GoOrganization } from "react-icons/go";
-import CardiologyPage from './pages/CardiologyPage'
-import DermatologyPage from './pages/DermatologyPage'
-import GynecologyPage from './pages/GynecologyPage'
-import OrthopedicsPage from './pages/OrthopedicsPage'
-import PediatricsPage from './pages/PediatricsPage'
-import PsychiatryPage from './pages/PsychiatryPage'
-import NeurologyPage from './pages/NeurologyPage'
-import DentistPage from './pages/DentistPage'
 import CompanyPage from './pages/CompanyPage'
 import logo from "../public/logo.png";
 import FreelancerForm from "./pages/FreelancerForm";
 import Checkout from "./pages/Checkout";
-
 
 // PrivateRoute Component
 const PrivateRoute = ({ children, isAuthenticated }) => {
@@ -97,6 +85,15 @@ const App = () => {
             </li>
             <li>
               <Link
+                to="/"
+                className="flex items-center text-black hover:text-blue-300 transition-colors font-semibold"
+              >
+                <FaBriefcase className="mr-2 stroke-2" size={22} />
+                <span className="text-sm uppercase tracking-wide">Job</span>
+              </Link>
+            </li>
+            <li>
+              <Link
                 to="/People"
                 className="flex items-center text-black hover:text-blue-300 transition-colors font-semibold"
               >
@@ -136,7 +133,7 @@ const App = () => {
                     <ul className="py-2">
                       <li>
                         <Link
-                          to="/profile"
+                          to="/myProfile/Profile"
                           className="block px-4 py-2 text-gray-700 hover:bg-indigo-100 transition-colors"
                         >
                           View Full Profile
@@ -179,28 +176,13 @@ const App = () => {
           <Route path="/auth/login" element={<LoginPage />} />
           <Route path="/People" element={<DoctorPage />} />
           <Route path="/Company" element={<CompanyPage />} />
-          <Route path="/People/:specialty" element={<DoctorPage />} />
-          <Route path="/admin" element={<AdminDashboard />} />
-
-          <Route path="/People/:id" element={<DoctorDetails />} />
 
 
-          <Route path="/profile" element={<ProfilePage  />} />
-          <Route path="/RegistrationCompany" element={<FormPage />} />
+          <Route path="/myProfile/*" element={<ProfilePage />} />
+          <Route path="/RegistrationCompany" element={<CompanyForm />} />
           <Route path="/RegistrationUser" element={<FreelancerForm />} /> 
-          <Route path= "/room/:roomId" element={<Calling />} />
-          <Route path= "/main/:roomId" element={<UserAppointment/>} />
           <Route path= "/checkout" element={<Checkout/>} />
 
-
-        <Route path="/specialty/cardiology" element={<CardiologyPage />} />
-        <Route path="/specialty/dermatology" element={<DermatologyPage />} />
-        <Route path="/specialty/pediatrics" element={<PediatricsPage />} />
-        <Route path="/specialty/neurology" element={<NeurologyPage />} />
-        <Route path="/specialty/orthopedics" element={<OrthopedicsPage />} />
-        <Route path="/specialty/psychiatry" element={<PsychiatryPage />} />
-        <Route path="/specialty/gynecology" element={<GynecologyPage />} />
-        <Route path="/specialty/dentist" element={<DentistPage />} />
         </Routes>
       </main>
     </BrowserRouter>

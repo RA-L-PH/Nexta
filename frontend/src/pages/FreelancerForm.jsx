@@ -87,7 +87,7 @@ const FreelancerContent = () => {
 
         const userId = user.uid;
         const userRef = doc(db, "users", userId);
-        const freelancersRef = collection(userRef, "freelancer");
+        const freelancersRef = collection(userRef, "Freelancer");
 
         await addDoc(freelancersRef, {
           name, email, photoFile: photoUrl, resumeFile: resumeUrl, address, mobileNo, skills, qualification,
