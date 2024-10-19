@@ -1,5 +1,3 @@
-import React from 'react';
-
 function UserJobs() {
     const requestedJobs = [
         { id: 1, title: 'Frontend Developer', company: 'Company A', date: '2023-10-01' },
