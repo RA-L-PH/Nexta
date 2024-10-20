@@ -50,30 +50,13 @@ const DoctorPage = () => {
     let filtered = doctors.filter(doctor => 
       (doctor.name?.toLowerCase().includes(searchQuery.toLowerCase()) || 
       doctor.freelancerDetails.some(freelancer => 
-        freelancer.qualification?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        freelancer.skills?.toLowerCase().includes(searchQuery.toLowerCase())
+        freelancer.productsServices?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (freelancer.companyName?.toLowerCase().includes(searchQuery.toLowerCase())
+        )
       ))
     );
 
     filtered = filtered.filter(doctor => doctor.role === 'Company');
-  
-    if (sortOption === 'alphabetical') {
-      filtered.sort((a, b) => a.name.localeCompare(b.name));
-    } 
-    else if (sortOption === 'experience') {
-      filtered.sort((a, b) => {
-        const aExperience = Math.max(...a.freelancerDetails.map(f => f.experience));
-        const bExperience = Math.max(...b.freelancerDetails.map(f => f.experience));
-        return bExperience - aExperience;
-      });
-    }
-    else if (sortOption === 'fee'){
-      filtered.sort((a, b) => {
-        const aFee = Math.min(...a.freelancerDetails.map(f => f.hourlyRate));
-        const bFee = Math.min(...b.freelancerDetails.map(f => f.hourlyRate));
-        return aFee - bFee;
-      });
-    }
   
     setFilteredDoctors(filtered);
   }, [searchQuery, sortOption, doctors]);
@@ -84,29 +67,6 @@ const DoctorPage = () => {
 
   const closeInfoPopup = () => {
     setMoreInfoPopup({ isOpen: false, doctor: null });
-  };
-
-  const handleApply = async (freelancer) => {
-    const userId = currentUser ? currentUser.uid : null; // Get current user ID
-    
-    if (!userId) {
-      alert('Please log in to apply.');
-      return;
-    }
-  
-    const applicationData = {
-      companyName: freelancer.companyName,
-      ID: freelancer.id,
-      appliedAt: new Date(),
-    };
-  
-    try {
-      await setDoc(doc(collection(db, 'users', userId, 'applications'), freelancer.companyName), applicationData);
-      alert('Application submitted successfully!');
-    } catch (error) {
-      console.error("Error submitting application: ", error);
-      alert('Failed to submit application. Please try again later.');
-    }
   };
   
   return (
@@ -125,25 +85,11 @@ const DoctorPage = () => {
         <div className="flex justify-center mb-8">
           <input
             type="text"
-            placeholder="Search by name, specialty, or skills..."
+            placeholder="Search by name or product/services"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-1/2 px-4 py-2 border-2 border-purple-600 rounded-full text-purple-900 focus:outline-none focus:border-purple-800 transition duration-300 ease-in-out"
           />
-        </div>
-
-        {/* Sorting */}
-        <div className="flex justify-center mb-8">
-          <select
-            value={sortOption}
-            onChange={(e) => setSortOption(e.target.value)}
-            className="w-1/4 px-4 py-2 border-2 border-purple-600 rounded-full text-purple-900 focus:outline-none focus:border-purple-800 transition duration-300 ease-in-out"
-          >
-            <option value="">Sort By</option>
-            <option value="alphabetical">Alphabetical</option>
-            <option value="experience">Experience</option>
-            <option value="fee">Fee</option>
-          </select>
         </div>
 
         {/* Doctor Cards */}
@@ -194,11 +140,11 @@ const DoctorPage = () => {
   <div className="fixed top-0 left-0 w-full h-full bg-gray-900 bg-opacity-50 flex justify-center items-center">
     <div className="bg-white rounded-lg shadow-lg p-6 relative w-4/12">
       <button
-        onClick={closeInfoPopup}
-        className="absolute top-4 right-4 text-red-600 hover:text-red-900 transition duration-300"
-      >
-        &times;
-      </button>
+      onClick={closeInfoPopup}
+      className="absolute top-1 right-1 text-red-600 hover:text-red-900 transition duration-300 text-2xl p-2"
+     >
+      &times;
+    </button>
 
       {moreInfoPopup.doctor.freelancerDetails.map((freelancer) => (
         <div key={freelancer.photoURL}>
@@ -232,15 +178,6 @@ const DoctorPage = () => {
                 </a>
               )}
             </div>
-          </div>
-          {/* Apply Button */}
-          <div className="mt-4">
-                  <button
-                    onClick={() => handleApply(freelancer)}
-                    className="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-700  transition duration-300"
-                  >
-                    Apply Now!
-                  </button>
           </div>
         </div>
       ))}

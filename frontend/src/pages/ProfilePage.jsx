@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 import { getAuth } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../firebase/firebase';
+import ManageJobs from "./ManageJobs";
 
 function ProfilePage() {
   const [userData, setUserData] = useState(null);
@@ -132,7 +133,7 @@ function ProfilePage() {
           ) : userData.role === 'Company' ? (
             <>
               <Route path="Profile" element={<CompanyProfile />} />
-              <Route path="manageJobs" element={<div>Manage Jobs</div>} />
+              <Route path="manageJobs" element={<ManageJobs />} />
               <Route path="myHires" element={<div>Hires</div>} />
               {/* Redirect in case of invalid route */}
             </>
