@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import { NavLink } from 'react-router-dom';
 import { FaUser, FaUsers, FaTasks, FaBriefcase, FaFileAlt } from 'react-icons/fa';
+import { IoPeopleSharp } from "react-icons/io5";
 import UserProfile from "./UserProfile"; // Import the UserProfile component
 import UserJobs from "./UserJobs"; // Import the UserProfile component
 import CompanyProfile from "./CompanyProfile";
@@ -9,6 +10,8 @@ import { getAuth } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../firebase/firebase';
 import ManageJobs from "./ManageJobs";
+import MyResume from "./MyResume";
+import UserHires from "./UserHires";
 
 function ProfilePage() {
   const [userData, setUserData] = useState(null);
@@ -82,7 +85,7 @@ function ProfilePage() {
                   isActive ? 'bg-gray-700 p-3 rounded-lg flex items-center' : 'p-3 rounded-lg flex items-center hover:bg-gray-700'
                 }
               >
-                <FaFileAlt className="mr-2" /> My Hires
+                <IoPeopleSharp className="mr-2" /> My Hires
               </NavLink>
             </>
           ) : userData.role === 'Company' ? (
@@ -110,7 +113,7 @@ function ProfilePage() {
                   isActive ? 'bg-gray-700 p-3 rounded-lg flex items-center' : 'p-3 rounded-lg flex items-center hover:bg-gray-700'
                 }
               >
-                <FaFileAlt className="mr-2" /> My Hires
+                <IoPeopleSharp className="mr-2" /> My Hires
               </NavLink>
             </>
           ) : (
@@ -126,8 +129,8 @@ function ProfilePage() {
             <>
               <Route path="Profile" element={<UserProfile />} />
               <Route path="myJobs" element={<UserJobs />} />
-              <Route path="myResume" element={<div>Hello Resume</div>} />
-              <Route path="myHires" element={<div>Hires</div>} />
+              <Route path="myResume" element={<MyResume />} />
+              <Route path="myHires" element={<UserHires />} />
               {/* Redirect in case of invalid route */}
             </>
           ) : userData.role === 'Company' ? (

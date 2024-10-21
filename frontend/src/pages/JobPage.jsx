@@ -75,11 +75,13 @@ const JobPage = () => {
       companyName: job.companyName,
       jobTitle : job.title,
       skills : job.skills,
+      id: job.jobId,
+      userId: userId,
       appliedAt: new Date(),
     };
 
     try {
-      await setDoc(doc(collection(db, 'users', userId, 'applications'), job.companyName), applicationData);
+      await setDoc(doc(collection(db, 'users', userId, 'applications'), job.jobId), applicationData);
       alert('Application submitted successfully!');
     } catch (error) {
       console.error("Error submitting application: ", error);

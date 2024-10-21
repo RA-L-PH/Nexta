@@ -41,30 +41,36 @@ const ManageJobs = () => {
     e.preventDefault();
     if (userId) {
       const skillsArray = newJob.skills.split(',').map(skill => skill.trim());
-
+  
       if (editingJobId) {
         // Update job if we are editing
         const jobDoc = doc(db, 'users', userId, 'jobs', editingJobId);
         await updateDoc(jobDoc, {
           ...newJob,
           skills: skillsArray,
+          jobId: editingJobId, // Set the jobId attribute to the existing document ID
         });
-
+  
         setJobs(jobs.map(job => (job.id === editingJobId ? { id: editingJobId, ...newJob, skills: skillsArray } : job)));
         setEditingJobId(null); // Reset after updating
       } else {
         // Add new job if not editing
-        const jobDoc = await addDoc(collection(db, 'users', userId, 'jobs'), {
+        const jobDocRef = await addDoc(collection(db, 'users', userId, 'jobs'), {
           ...newJob,
           skills: skillsArray,
           companyName: companyName,
         });
-        setJobs([...jobs, { id: jobDoc.id, ...newJob, skills: skillsArray }]);
+  
+        // Update the new document to include the jobId
+        await updateDoc(jobDocRef, { jobId: jobDocRef.id });
+  
+        setJobs([...jobs, { id: jobDocRef.id, ...newJob, skills: skillsArray, jobId: jobDocRef.id }]);
       }
-
+  
       setNewJob({ title: '', description: '', skills: '', companyName: companyName }); // Reset form
     }
   };
+  
 
   const handleDeleteJob = async (id) => {
     if (userId) {

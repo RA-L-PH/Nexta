@@ -28,11 +28,9 @@ function UserProfile() {
           for (const doc of freelancerSnap.docs) {
             const data = doc.data();
             const photoRef = ref(storage, data.photoFile);
-            const resumeRef = ref(storage, data.resumeFile);
             const photoURL = await getDownloadURL(photoRef);
-            const resumeURL = await getDownloadURL(resumeRef);
 
-            freelancerDetails.push({ id: doc.id, ...data, photoURL, resumeURL });
+            freelancerDetails.push({ id: doc.id, ...data, photoURL });
           }
           setFreelancerData(freelancerDetails);
           setEditedData(freelancerDetails[0]);
