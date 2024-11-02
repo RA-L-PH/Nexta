@@ -6,9 +6,10 @@ import { FiEdit, FiTrash2, FiPlusCircle } from 'react-icons/fi'; // Importing ic
 
 const ManageJobs = () => {
   const [jobs, setJobs] = useState([]);
-  const [newJob, setNewJob] = useState({ title: '', description: '', skills: '', companyName: '' });
+  const [newJob, setNewJob] = useState({ title: '', description: '', skills: '', companyName: '', companyId: '' });
   const [editingJobId, setEditingJobId] = useState(null); // To track if we are editing
   const [companyName, setCompanyName] = useState('');
+  const [companyId, setCompanyId] = useState('');
   const userId = getAuth().currentUser?.uid; // Get the current user's ID
 
   useEffect(() => {
@@ -19,13 +20,15 @@ const ManageJobs = () => {
         const jobsList = jobsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         setJobs(jobsList);
 
-        // Fetch the company name
+        // Fetch the company name and ID
         const companiesSnapshot = await getDocs(collection(db, 'users', userId, 'Companies'));
         const companyDoc = companiesSnapshot.docs[0]; // Assuming only one company for the user
         if (companyDoc) {
           const fetchedCompanyName = companyDoc.data().companyName;
+          const fetchedCompanyId = companyDoc.id; // Get the companyId
           setCompanyName(fetchedCompanyName);
-          setNewJob(prevJob => ({ ...prevJob, companyName: fetchedCompanyName }));
+          setCompanyId(fetchedCompanyId);
+          setNewJob(prevJob => ({ ...prevJob, companyName: fetchedCompanyName, companyId: fetchedCompanyId }));
         }
       }
     };
@@ -48,26 +51,27 @@ const ManageJobs = () => {
         await updateDoc(jobDoc, {
           ...newJob,
           skills: skillsArray,
+          userId: userId, // Replace companyId with userId
           jobId: editingJobId, // Set the jobId attribute to the existing document ID
         });
   
-        setJobs(jobs.map(job => (job.id === editingJobId ? { id: editingJobId, ...newJob, skills: skillsArray } : job)));
+        setJobs(jobs.map(job => (job.id === editingJobId ? { id: editingJobId, ...newJob, skills: skillsArray, userId } : job)));
         setEditingJobId(null); // Reset after updating
       } else {
         // Add new job if not editing
         const jobDocRef = await addDoc(collection(db, 'users', userId, 'jobs'), {
           ...newJob,
           skills: skillsArray,
-          companyName: companyName,
+          companyUserId: userId, // Add the userId instead of companyId
         });
   
         // Update the new document to include the jobId
         await updateDoc(jobDocRef, { jobId: jobDocRef.id });
   
-        setJobs([...jobs, { id: jobDocRef.id, ...newJob, skills: skillsArray, jobId: jobDocRef.id }]);
+        setJobs([...jobs, { id: jobDocRef.id, ...newJob, skills: skillsArray, jobId: jobDocRef.id, userId }]);
       }
   
-      setNewJob({ title: '', description: '', skills: '', companyName: companyName }); // Reset form
+      setNewJob({ title: '', description: '', skills: '', companyName: companyName, companyUserId: userId }); // Reset form
     }
   };
   

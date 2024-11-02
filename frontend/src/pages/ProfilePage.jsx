@@ -1,7 +1,7 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import { NavLink } from 'react-router-dom';
 import { FaUser, FaUsers, FaTasks, FaBriefcase, FaFileAlt } from 'react-icons/fa';
-import { IoPeopleSharp } from "react-icons/io5";
+import { IoPeopleSharp, IoDocuments } from "react-icons/io5";
 import UserProfile from "./UserProfile"; // Import the UserProfile component
 import UserJobs from "./UserJobs"; // Import the UserProfile component
 import CompanyProfile from "./CompanyProfile";
@@ -12,6 +12,8 @@ import { db } from '../firebase/firebase';
 import ManageJobs from "./ManageJobs";
 import MyResume from "./MyResume";
 import UserHires from "./UserHires";
+import CompanyHires from "./CompanyHires";
+import Applications from "./Applications";
 
 function ProfilePage() {
   const [userData, setUserData] = useState(null);
@@ -108,6 +110,14 @@ function ProfilePage() {
                 <FaTasks className="mr-2" /> Manage Jobs
               </NavLink>
               <NavLink
+                to="/myProfile/applications"
+                className={({ isActive }) =>
+                  isActive ? 'bg-gray-700 p-3 rounded-lg flex items-center' : 'p-3 rounded-lg flex items-center hover:bg-gray-700'
+                }
+              >
+                <IoDocuments className="mr-2" /> Applications
+              </NavLink>
+              <NavLink
                 to="/myProfile/myHires"
                 className={({ isActive }) =>
                   isActive ? 'bg-gray-700 p-3 rounded-lg flex items-center' : 'p-3 rounded-lg flex items-center hover:bg-gray-700'
@@ -137,7 +147,8 @@ function ProfilePage() {
             <>
               <Route path="Profile" element={<CompanyProfile />} />
               <Route path="manageJobs" element={<ManageJobs />} />
-              <Route path="myHires" element={<div>Hires</div>} />
+              <Route path="applications" element={<Applications/>} />
+              <Route path="myHires" element={<CompanyHires/>} />
               {/* Redirect in case of invalid route */}
             </>
           ) : (

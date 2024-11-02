@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { collection, getDocs, query, where, setDoc, doc, getDoc, deleteDoc  } from 'firebase/firestore';
-import { db } from '../firebase/firebase'; // Adjust the path based on your setup
+import { collection, getDocs, query, where, setDoc, doc, getDoc, deleteDoc } from 'firebase/firestore';
+import { db } from '../firebase/firebase';
 import { getAuth } from 'firebase/auth';
 
 const JobPage = () => {
@@ -21,14 +21,10 @@ const JobPage = () => {
           const userSnap = await getDoc(userRef);
           if (userSnap.exists()) {
             setUserData(userSnap.data());
-          } else {
-            console.log('No such document!');
           }
         } catch (error) {
           console.error('Error fetching user data:', error);
         }
-      } else {
-        console.log('User is not authenticated!');
       }
     };
 
@@ -49,7 +45,7 @@ const JobPage = () => {
             if (typeof jobData.skills === 'string') {
               jobData.skills = jobData.skills.split(',').map(skill => skill.trim());
             }
-            allJobs.push(jobData);
+            allJobs.push({ ...jobData, companyUserId: doc.id, jobId: jobDoc.id });
           });
         }
 
@@ -66,26 +62,58 @@ const JobPage = () => {
   }, [user]);
 
   const handleApply = async (job) => {
-    if (!userId) {
-      console.error('User ID is not available');
+    if (!user) {
+      console.error('User is not authenticated');
       return;
     }
-
+  
+    const userId = user.uid; 
     const applicationData = {
       companyName: job.companyName,
-      jobTitle : job.title,
-      skills : job.skills,
-      id: job.jobId,
-      userId: userId,
+      jobTitle: job.title,
+      skills: job.skills,
+      jobId: job.jobId,
+      applicantId: userId,
+      status: 'Pending',
       appliedAt: new Date(),
     };
-
+  
     try {
-      await setDoc(doc(collection(db, 'users', userId, 'applications'), job.jobId), applicationData);
+      // Add application to the user's applications subcollection
+      await setDoc(doc(db, 'users', userId, 'applications', job.jobId), applicationData);
+  
+      // Reference to the company's job document
+      const companyJobDocRef = doc(db, 'users', job.companyUserId, 'jobs', job.jobId);
+  
+      // Add application to the receivedApplications subcollection of the user who posted the job
+      const receivedApplicationRef = doc(db, 'users', job.companyUserId, 'receivedApplications', job.jobId);
+  
+      // Application details for receivedApplications subcollection
+      const receivedApplicationData = {
+        applicantId: userId,
+        jobId: job.jobId,
+        appliedAt: new Date(),
+        status: 'Pending',
+      };
+  
+      await setDoc(receivedApplicationRef, receivedApplicationData, { merge: true });
+  
+      // Fetch and update the applicants array in the job document under the company's collection
+      const jobDocSnap = await getDoc(companyJobDocRef);
+      let updatedApplicants = [];
+  
+      if (jobDocSnap.exists()) {
+        const jobData = jobDocSnap.data();
+        updatedApplicants = jobData.applicants ? [...jobData.applicants, userId] : [userId];
+      } else {
+        updatedApplicants = [userId];
+      }
+  
+      await setDoc(companyJobDocRef, { applicants: updatedApplicants }, { merge: true });
+  
       alert('Application submitted successfully!');
     } catch (error) {
       console.error("Error submitting application: ", error);
-      console.log(applicationData);
       alert('Failed to submit application. Please try again later.');
     }
   };
@@ -97,12 +125,12 @@ const JobPage = () => {
     }
 
     try {
-      await deleteDoc(doc(collection(db, 'users', userId, 'applications'), job.jobId));
+      await deleteDoc(doc(db, 'users', userId, 'applications', job.jobId));
       alert('Application withdrawn successfully!');
 
       setAppliedJobs(prev => {
         const updated = new Set(prev);
-        updated.delete(job.jobId); // Remove jobId from the applied jobs
+        updated.delete(job.jobId);
         return updated;
       });
     } catch (error) {
@@ -145,7 +173,6 @@ const JobPage = () => {
                 ))}
               </div>
             </div>
-            {/* Show Apply button only for users with the role 'User' */}
             {userData && userData.role === 'User' && (
               <button
                 className="bg-blue-500 text-white px-4 py-2 rounded"

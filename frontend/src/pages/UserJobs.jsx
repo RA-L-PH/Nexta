@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { db } from '../firebase/firebase'; // Import Firestore config
 import { getAuth } from 'firebase/auth'; // Firebase auth to get the current user ID
-import { collection, getDocs } from 'firebase/firestore'; // Firestore functions
+import { collection, getDocs, deleteDoc, doc } from 'firebase/firestore'; // Firestore functions
 
 const UserJobs = () => {
     const [appliedJobs, setAppliedJobs] = useState([]);
@@ -35,6 +35,22 @@ const UserJobs = () => {
         fetchAppliedJobs(); // Fetch applied jobs when the component loads
     }, [userId]);
 
+    // Function to handle job deletion
+    const handleDeleteJob = async (jobId) => {
+        if (userId) {
+            try {
+                // Delete the job from the Firestore database
+                await deleteDoc(doc(db, 'users', userId, 'applications', jobId));
+                // Update the state to remove the deleted job
+                setAppliedJobs(prevJobs => prevJobs.filter(job => job.id !== jobId));
+                alert('Job deleted successfully!');
+            } catch (error) {
+                console.error("Error deleting job: ", error);
+                alert('Failed to delete the job. Please try again later.');
+            }
+        }
+    };
+
     return (
         <div className="container mx-auto p-4">
             <div className="grid grid-cols-2 gap-4">
@@ -55,14 +71,21 @@ const UserJobs = () => {
                     <h2 className="text-xl font-bold mb-4">Applied Jobs</h2>
                     {appliedJobs.length > 0 ? (
                         appliedJobs.map((job) => (
-                            <div key={job.id} className="bg-white p-4 mb-4 shadow-md rounded">
+                            <div key={job.id} className="bg-white p-4 mb-4 shadow-md rounded relative">
+                                <button 
+                                    className="absolute top-2 right-2 text-red-500" 
+                                    onClick={() => handleDeleteJob(job.id)}
+                                >
+                                    Delete
+                                </button>
                                 <h3 className="text-lg font-semibold">{job.jobTitle}</h3>
                                 <p className="text-gray-600">{job.companyName}</p>
+                                <p className="text-gray-600">{job.status}</p>
                                 <div className="mt-2">
                                     {job.skills.map((skill, idx) => (
-                                    <span key={idx} className="inline-block bg-gray-200 text-gray-800 px-2 py-1 rounded mr-2">
-                                        {skill}
-                                    </span>
+                                        <span key={idx} className="inline-block bg-gray-200 text-gray-800 px-2 py-1 rounded mr-2">
+                                            {skill}
+                                        </span>
                                     ))}
                                 </div>
                             </div>

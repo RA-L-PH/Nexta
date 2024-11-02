@@ -183,13 +183,6 @@ const HomePage = () => {
           <img src={logo} className="h-20 w-20 mr-1" alt="Logo"/>
           </div>
 
-          <div className="flex space-x-4 text-gray-900">
-            <Link to="/about" className="hover:underline">About Us</Link>
-            <Link to="/contact" className="hover:underline">Contact</Link>
-            <Link to="/privacy-policy" className="hover:underline">Privacy Policy</Link>
-            <Link to="/terms-of-service" className="hover:underline">Terms of Service</Link>
-          </div>
-
           <div className="mt-4 md:mt-0 text-gray-900">
             &copy; {new Date().getFullYear()} Nexta. All rights reserved.
           </div>
