@@ -39,8 +39,33 @@ const UserJobs = () => {
     const handleDeleteJob = async (jobId) => {
         if (userId) {
             try {
+                // Find the job to get the applicationId and companyUser  Id
+                const jobToDelete = appliedJobs.find(job => job.id === jobId);
+                if (!jobToDelete) {
+                    console.error("Job not found");
+                    return;
+                }
+    
+                const applicationId = jobToDelete.applicationId; // Get the applicationId
+                const companyUserId = jobToDelete.companyId; // Get the company user ID
+    
+                // Debugging: Check if values are defined
+                console.log("Deleting job with ID:", jobId);
+                console.log("Application ID:", applicationId);
+                console.log("Company User ID:", companyUserId);
+    
+                // Check if applicationId and companyUser Id are valid
+                if (!applicationId || !companyUserId) {
+                    console.error("Invalid applicationId or companyUser Id");
+                    return;
+                }
+    
                 // Delete the job from the Firestore database
                 await deleteDoc(doc(db, 'users', userId, 'applications', jobId));
+    
+                // Also delete the corresponding document from receivedApplications
+                await deleteDoc(doc(db, 'users', companyUserId, 'receivedApplications', applicationId));
+    
                 // Update the state to remove the deleted job
                 setAppliedJobs(prevJobs => prevJobs.filter(job => job.id !== jobId));
                 alert('Job deleted successfully!');
@@ -80,7 +105,21 @@ const UserJobs = () => {
                                 </button>
                                 <h3 className="text-lg font-semibold">{job.jobTitle}</h3>
                                 <p className="text-gray-600">{job.companyName}</p>
-                                <p className="text-gray-600">{job.status}</p>
+                                <div className="mt-2">
+                                    {job.status === 'Approved' ? (
+                                        <span className="inline-block bg-green-200 text-green-800 px-2 py-1 rounded mr-2">
+                                            Approved
+                                        </span>
+                                    ) : job.status === 'Denied' ? (
+                                        <span className="inline-block bg-red-200 text-red-800 px-2 py-1 rounded mr-2">
+                                            Denied
+                                        </span>
+                                    ) : (
+                                        <span className="inline-block bg-gray-200 text-gray-800 px-2 py-1 rounded mr-2">
+                                            Pending
+                                        </span>
+                                    )}
+                                </div>
                                 <div className="mt-2">
                                     {job.skills.map((skill, idx) => (
                                         <span key={idx} className="inline-block bg-gray-200 text-gray-800 px-2 py-1 rounded mr-2">

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { collection, getDocs, query, where, setDoc, doc, getDoc, deleteDoc } from 'firebase/firestore';
+import { collection, getDocs, query, where, setDoc, doc, getDoc, deleteDoc, addDoc } from 'firebase/firestore';
 import { db } from '../firebase/firebase';
 import { getAuth } from 'firebase/auth';
 
@@ -63,13 +63,14 @@ const JobPage = () => {
 
   const handleApply = async (job) => {
     if (!user) {
-      console.error('User is not authenticated');
+      console.error('User  is not authenticated');
       return;
     }
   
     const userId = user.uid; 
     const applicationData = {
       companyName: job.companyName,
+      companyId: job.companyUserId,
       jobTitle: job.title,
       skills: job.skills,
       jobId: job.jobId,
@@ -79,24 +80,29 @@ const JobPage = () => {
     };
   
     try {
-      // Add application to the user's applications subcollection
-      await setDoc(doc(db, 'users', userId, 'applications', job.jobId), applicationData);
-  
-      // Reference to the company's job document
-      const companyJobDocRef = doc(db, 'users', job.companyUserId, 'jobs', job.jobId);
-  
-      // Add application to the receivedApplications subcollection of the user who posted the job
-      const receivedApplicationRef = doc(db, 'users', job.companyUserId, 'receivedApplications', job.jobId);
-  
-      // Application details for receivedApplications subcollection
-      const receivedApplicationData = {
+      // First, create a document in the receivedApplications collection to get the applicationId
+      const receivedApplicationRef = await addDoc(collection(db, `users/${job.companyUserId}/receivedApplications`), {
         applicantId: userId,
         jobId: job.jobId,
         appliedAt: new Date(),
         status: 'Pending',
-      };
+      });
   
-      await setDoc(receivedApplicationRef, receivedApplicationData, { merge: true });
+      const applicationId = receivedApplicationRef.id; // Get the generated application ID
+  
+      // Now, set the application data including the applicationId in the user's applications subcollection
+      await setDoc(doc(db, 'users', userId, 'applications', job.jobId), {
+        ...applicationData,
+        applicationId: applicationId, // Add applicationId to the application data
+      });
+  
+      // Update the receivedApplications document to include the applicationId
+      await setDoc(receivedApplicationRef, {
+        applicationId: applicationId, // Add applicationId to the receivedApplications document
+      }, { merge: true });
+  
+      // Reference to the company's job document
+      const companyJobDocRef = doc(db, 'users', job.companyUserId, 'jobs', job.jobId);
   
       // Fetch and update the applicants array in the job document under the company's collection
       const jobDocSnap = await getDoc(companyJobDocRef);

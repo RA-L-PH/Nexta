@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { collection, getDocs, doc, getDoc } from 'firebase/firestore';
+import { collection, getDocs, doc, getDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase/firebase'; // Adjust path as needed
 import { getAuth } from 'firebase/auth';
+import { AiOutlineInfoCircle } from 'react-icons/ai'; // Import the info icon
 
 const Applications = () => {
   const [receivedApplications, setReceivedApplications] = useState([]);
@@ -9,7 +10,10 @@ const Applications = () => {
   const [searchReceived, setSearchReceived] = useState('');
   const [searchSent, setSearchSent] = useState('');
   const [userDetails, setUserDetails] = useState({});
+  const [disabledButtons, setDisabledButtons] = useState({}); // Track disabled buttons
   const [jobDetails, setJobDetails] = useState({});
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedApplication, setSelectedApplication] = useState(null);
   const auth = getAuth();
   const user = auth.currentUser ;
 
@@ -116,6 +120,57 @@ const Applications = () => {
     fetchSentApplications();
   }, [user]);
 
+  const handleOpenModal = (app) => {
+    setSelectedApplication(app);
+    setModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setModalOpen(false);
+  };
+
+  const handleApprove = async (appId, applicantId, jobId) => {
+    try {
+      const appRef = doc(db, `users/${user.uid}/receivedApplications/${appId}`);
+      await updateDoc(appRef, { status: 'Approved' });
+
+      const subAppRef = doc(db, `users/${applicantId}/applications/${jobId}`);
+      await updateDoc(subAppRef, { status: 'Approved' });
+
+      setReceivedApplications((prev) =>
+        prev.map((app) => (app.id === appId ? { ...app, status: 'Approved' } : app))
+      );
+
+      // Disable the approve button
+      setDisabledButtons((prev) => ({ ...prev, [appId]: 'approve' }));
+
+      console.log('Application approved successfully!');
+    } catch (error) {
+      console.error('Error approving application:', error);
+    }
+  };
+
+  const handleDeny = async (appId, applicantId, jobId) => {
+    try {
+      const appRef = doc(db, `users/${user.uid}/receivedApplications/${appId}`);
+      await updateDoc(appRef, { status: 'Denied' });
+
+      const subAppRef = doc(db, `users/${applicantId}/applications/${jobId}`);
+      await updateDoc(subAppRef, { status: 'Denied' });
+
+      setReceivedApplications((prev) =>
+        prev.map((app) => (app.id === appId ? { ...app, status: 'Denied' } : app))
+      );
+
+      // Disable the deny button
+      setDisabledButtons((prev) => ({ ...prev, [appId]: 'deny' }));
+
+      console.log('Application denied successfully!');
+    } catch (error) {
+      console.error('Error denying application:', error);
+    }
+  };
+
   const filteredReceived = receivedApplications.filter((app) =>
     userDetails[app.applicantId]?.name?.toLowerCase().includes(searchReceived.toLowerCase())
   );
@@ -126,7 +181,7 @@ const Applications = () => {
 
   return (
     <div className="p-6 flex flex-wrap">
-      <div className ="w-1/2 pr-4">
+      <div className="w-1/2 pr-4">
         <div className="flex items-center mb-4">
           <h1 className="text-2xl font-bold">Applications Received</h1>
           <input
@@ -148,12 +203,40 @@ const Applications = () => {
                       <p className="text-gray-700">
                         {jobDetails[app.applicantId]?.[app.jobId] || 'No job title available'}
                       </p>
+                      <AiOutlineInfoCircle
+                        className="cursor-pointer"
+                        onClick={() => handleOpenModal(app)}
+                      />
                     </div>
                   ))}
                   <div className="flex-1 p-4 border-t md:border-t-0 md:border-l">
                     <strong className="block text-lg text-blue-600">
                       Status: {app.status || 'N/A'}
                     </strong>
+                    {app.status === 'Pending' && (
+                      <div>
+                        <button
+                          className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+                          onClick={() => handleApprove(app.id, app.applicantId, app.jobId)}
+                          disabled={disabledButtons[app.id] === 'approve'}
+                        >
+                          Approve
+                        </button>
+                        <button
+                          className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                          onClick={() => handleDeny(app.id, app.applicantId, app.jobId)}
+                          disabled={disabledButtons[app.id] === 'deny'}
+                        >
+                          Deny
+                        </button>
+                      </div>
+                    )}
+                    {app.status === 'Approved' && (
+                      <span className="text-green-600">Approved</span>
+                    )}
+                    {app.status === 'Denied' && (
+                      <span className="text-red-600">Denied</span>
+                    )}
                   </div>
                 </div>
               )}
@@ -197,6 +280,19 @@ const Applications = () => {
           ))}
         </ul>
       </div>
+
+      {modalOpen && (
+        <div className="fixed top-0 left-0 w-full h-full bg-gray-900 bg-opacity-50 flex justify-center">
+          <div className="bg-white rounded-lg p-4 w-1/2">
+            <AiOutlineInfoCircle
+              className="cursor-pointer float-right"
+              onClick={handleCloseModal}
+            />
+            <h2 className="text-lg font-bold">{selectedApplication?.applicantId}</h2>
+            <p className="text-gray-700">{selectedApplication?.jobId}</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
