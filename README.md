@@ -38,7 +38,7 @@ HireMe is a full-stack web application for freelancers and clients to find each 
 
 ### Screenshots
 
-<a href="https://github.com/omarabid/hireme/raw/master/docs/assets/hireme-1.png"><img src="https://github.com/omarabid/hireme/raw/master/docs/assets/hireme-1.png" alt="HireMe" width="300"></a>
+<a href="https://raw.githubusercontent.com/RA-L-PH/Nexta/refs/heads/main/frontend/src/assets/Screenshot%202024-10-28%20235221.png"><img src="https://github.com/omarabid/hireme/raw/master/docs/assets/hireme-1.png" alt="HireMe" width="300"></a>
 <a href="https://github.com/omarabid/hireme/raw/master/docs/assets/hireme-2.png"><img src="https://github.com/omarabid/hireme/raw/master/docs/assets/hireme-2.png" alt="HireMe" width="300"></a>
 <a href="https://github.com/omarabid/hireme/raw/master/docs/assets/hireme-3.png"><img src="https://github.com/omarabid/hireme/raw/master/docs/assets/hireme-3.png" alt="HireMe" width="300"></a>
 
