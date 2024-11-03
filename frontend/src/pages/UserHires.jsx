@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { db } from '../firebase/firebase';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { collection, getDocs } from 'firebase/firestore';
+import { HiOutlineMail } from "react-icons/hi";
+import { IoCall } from "react-icons/io5";
 
 const UserHires = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -25,6 +27,8 @@ const UserHires = () => {
                 id: doc.id,
                 name: item.doctorDetails?.name || 'Unknown',
                 position: item.doctorDetails?.workingType || 'N/A',
+                mobileNo: item.doctorDetails?.mobileNo || 'N/A',
+                email: item.doctorDetails?.email || 'N/A',
                 startDate: doc.data().startDate || 'N/A',
                 endDate: doc.data().endDate || 'N/A',
               }));
@@ -94,6 +98,18 @@ const UserHires = () => {
             <p className="text-gray-600">{candidate.position}</p>
             <p className="text-gray-500">Start Date: {candidate.startDate}</p>
             <p className="text-gray-500">End Date: {candidate.endDate}</p>
+            <p className="text-gray-500">
+              <a href={`mailto:${candidate.email}`} className="hover:underline">
+                <HiOutlineMail className="inline-block mr-1" />
+                {candidate.email}
+              </a>
+            </p>
+            <p className="text-gray-500">
+              <a href={`tel:${candidate.mobileNo}`} className="hover:underline">
+                <IoCall className="inline-block mr-1" />
+                {candidate.mobileNo}
+              </a>
+            </p>
           </div>
         ))}
       </div>

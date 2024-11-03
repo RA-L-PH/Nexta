@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { db } from '../firebase/firebase';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { collection, getDocs } from 'firebase/firestore';
+import { HiOutlineMail } from "react-icons/hi";
+import { IoCall } from "react-icons/io5";
 
 const CompanyHires = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -26,6 +28,8 @@ const CompanyHires = () => {
                 name: item.doctorDetails?.name || 'Unknown',
                 position: item.doctorDetails?.workingType || 'N/A',
                 skills : item.doctorDetails?.skills || 'N/A',
+                mobileNo : item.doctorDetails?.mobileNo || 'N/A',
+                email : item.doctorDetails?.email || 'N/A',
               }));
           });
 
@@ -46,6 +50,8 @@ const CompanyHires = () => {
                   name: freelancerData.name || 'Unknown',
                   position: freelancerData.workingType || 'N/A',
                   skills : freelancerData.skills || 'N/A',
+                  mobileNo : freelancerData.mobileNo || 'N/A',
+                  email : freelancerData.email || 'N/A',
                 };
               }
               return null;
@@ -113,6 +119,18 @@ const CompanyHires = () => {
             <div>
               <h2 className="text-xl font-semibold">{candidate.name}</h2>
               <p className="text-gray-600">{candidate.position} | Skills: {candidate.skills}</p>
+              <p className="text-gray-500">
+              <a href={`mailto:${candidate.email}`} className="hover:underline">
+                <HiOutlineMail className="inline-block mr-1" />
+                {candidate.email}
+              </a>
+            </p>
+            <p className="text-gray-500">
+              <a href={`tel:${candidate.mobileNo}`} className="hover:underline">
+                <IoCall className="inline-block mr-1" />
+                {candidate.mobileNo}
+              </a>
+            </p>
             </div>
           </li>
         ))}
