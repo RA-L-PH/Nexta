@@ -1,72 +1,171 @@
 import React, { useState, useEffect } from 'react';
-import { db } from '../firebase/firebase'; // Import Firestore config
-import { getAuth } from 'firebase/auth'; // Firebase auth to get the current user ID
-import { collection, getDocs, deleteDoc, doc } from 'firebase/firestore'; // Firestore functions
+import { db } from '../firebase/firebase';
+import { getAuth } from 'firebase/auth';
+import { 
+    collection, 
+    getDocs, 
+    doc, 
+    getDoc, 
+    deleteDoc, 
+    updateDoc 
+} from 'firebase/firestore';
 
 const UserJobs = () => {
     const [appliedJobs, setAppliedJobs] = useState([]);
-    const [requestedJobs] = useState([ // Static data for requested jobs
-        { id: 1, title: 'Frontend Developer', company: 'Company A', date: '2023-10-01' },
-        { id: 2, title: 'Backend Developer', company: 'Company B', date: '2023-10-02' },
-    ]);
+    const [requestedJobs, setRequestedJobs] = useState([]);
+    const [loading, setLoading] = useState(false);
 
-    const userId = getAuth().currentUser?.uid; // Get the current user ID
+    const userId = getAuth().currentUser?.uid;
 
     useEffect(() => {
         const fetchAppliedJobs = async () => {
             if (userId) {
                 try {
-                    // Fetch the 'applications' subcollection for the current user
                     const applicationsSnapshot = await getDocs(collection(db, 'users', userId, 'applications'));
-
-                    // Map the Firestore documents into the appliedJobs state
                     const jobs = applicationsSnapshot.docs.map(doc => ({
                         id: doc.id,
                         ...doc.data(),
                     }));
-
-                    setAppliedJobs(jobs); // Update the state with fetched jobs
+                    setAppliedJobs(jobs);
                 } catch (error) {
                     console.error("Error fetching applied jobs: ", error);
                 }
             }
         };
 
-        fetchAppliedJobs(); // Fetch applied jobs when the component loads
+        const fetchRequestedJobs = async () => {
+            if (userId) {
+                try {
+                    const applicationsSnapshot = await getDocs(collection(db, 'users', userId, 'bookedRequests'));
+        
+                    const jobs = await Promise.all(
+                        applicationsSnapshot.docs.map(async (applicationDoc) => {
+                            const jobData = applicationDoc.data();
+                            const requesterId = jobData.requesterId;
+        
+                            try {
+                                const requesterDoc = await getDoc(doc(db, 'users', requesterId));
+                                
+                                if (!requesterDoc.exists()) {
+                                    console.error(`Requester with ID ${requesterId} not found`);
+                                    return null;
+                                }
+        
+                                const requesterData = requesterDoc.data();
+                                let additionalData = {};
+        
+                                if (requesterData.role === 'Company') {
+                                    const companySnapshot = await getDocs(collection(db, 'users', requesterId, 'Companies'));
+                                    additionalData = companySnapshot.docs.map((companyDoc) => companyDoc.data());
+                                } else if (requesterData.role === 'User') {
+                                    const freelancerSnapshot = await getDocs(collection(db, 'users', requesterId, 'Freelancer'));
+                                    additionalData = freelancerSnapshot.docs.map((freelancerDoc) => freelancerDoc.data());
+                                }
+        
+                                return {
+                                    id: applicationDoc.id,
+                                    requesterId,
+                                    ...jobData,
+                                    requesterData,
+                                    additionalData,
+                                };
+                            } catch (error) {
+                                console.error(`Error fetching data for requesterId ${requesterId}: `, error);
+                                return null;
+                            }
+                        })
+                    );
+        
+                    setRequestedJobs(jobs.filter(job => job !== null));
+                } catch (error) {
+                    console.error("Error fetching requested jobs: ", error);
+                }
+            }
+        };
+
+        fetchRequestedJobs();
+        fetchAppliedJobs();
     }, [userId]);
 
-    // Function to handle job deletion
+    const handleRequestResponse = async (jobId, requesterId, bookingId, action) => {
+        if (!userId) return;
+        setLoading(true);
+    
+        try {
+            // Reference for the current user's booking
+            const currentUserBookingRef = doc(db, 'users', userId, 'bookedRequests', jobId);
+            // Reference for the requester's booking
+            const requesterBookingRef = doc(db, 'users', requesterId, 'booked', bookingId);
+    
+            // Fetch the requester's booking document
+            const requesterBookingDoc = await getDoc(requesterBookingRef);
+            if (!requesterBookingDoc.exists()) {
+                throw new Error('Booking document not found');
+            }
+    
+            // Retrieve and update the cartItems array in the requester's booking document
+            const bookingData = requesterBookingDoc.data();
+            const cartItems = bookingData.cartItems || [];
+    
+            const updatedCartItems = cartItems.map(item => {
+                if (item.id === jobId) {
+                    return {
+                        ...item,
+                        status: action === 'accept' ? 'Accepted' : 'Rejected'
+                    };
+                }
+                return item;
+            });
+    
+            // Update both the current user’s and requester's booking documents
+            await Promise.all([
+                updateDoc(currentUserBookingRef, {
+                    status: action === 'accept' ? 'Accepted' : 'Rejected'
+                }),
+                updateDoc(requesterBookingRef, {
+                    cartItems: updatedCartItems
+                })
+            ]);
+    
+            // Update the local state to reflect the changes in the UI
+            setRequestedJobs(prevJobs => 
+                prevJobs.map(job => 
+                    job.id === jobId 
+                        ? { ...job, status: action === 'accept' ? 'Accepted' : 'Rejected' }
+                        : job
+                )
+            );
+    
+            alert(`Request ${action === 'accept' ? 'accepted' : 'rejected'} successfully!`);
+        } catch (error) {
+            console.error(`Error ${action}ing request:`, error);
+            alert(`Failed to ${action} request. Please try again later.`);
+        } finally {
+            setLoading(false);
+        }
+    };
+    
+
     const handleDeleteJob = async (jobId) => {
         if (userId) {
             try {
-                // Find the job to get the applicationId and companyUser  Id
                 const jobToDelete = appliedJobs.find(job => job.id === jobId);
                 if (!jobToDelete) {
                     console.error("Job not found");
                     return;
                 }
-    
-                const applicationId = jobToDelete.applicationId; // Get the applicationId
-                const companyUserId = jobToDelete.companyId; // Get the company user ID
-    
-                // Debugging: Check if values are defined
-                console.log("Deleting job with ID:", jobId);
-                console.log("Application ID:", applicationId);
-                console.log("Company User ID:", companyUserId);
-    
-                // Check if applicationId and companyUser Id are valid
+
+                const applicationId = jobToDelete.applicationId;
+                const companyUserId = jobToDelete.companyId;
+
                 if (!applicationId || !companyUserId) {
-                    console.error("Invalid applicationId or companyUser Id");
+                    console.error("Invalid applicationId or companyUserId");
                     return;
                 }
-    
-                // Delete the job from the Firestore database
+
                 await deleteDoc(doc(db, 'users', userId, 'applications', jobId));
-    
-                // Also delete the corresponding document from receivedApplications
                 await deleteDoc(doc(db, 'users', companyUserId, 'receivedApplications', applicationId));
-    
-                // Update the state to remove the deleted job
+
                 setAppliedJobs(prevJobs => prevJobs.filter(job => job.id !== jobId));
                 alert('Job deleted successfully!');
             } catch (error) {
@@ -84,9 +183,63 @@ const UserJobs = () => {
                     <h2 className="text-xl font-bold mb-4">Requested Jobs</h2>
                     {requestedJobs.map((job) => (
                         <div key={job.id} className="bg-white p-4 mb-4 shadow-md rounded">
-                            <h3 className="text-lg font-semibold">{job.title}</h3>
-                            <p className="text-gray-600">{job.company}</p>
-                            <p className="text-gray-400">{job.date}</p>
+                            {/* Status Display */}
+                            <div className="mt-2">
+                                <span className={`inline-block px-2 py-1 rounded mr-2 ${
+                                    job.status === 'Accepted' ? 'bg-green-200 text-green-800' :
+                                    job.status === 'Rejected' ? 'bg-red-200 text-red-800' :
+                                    'bg-gray-200 text-gray-800'
+                                }`}>
+                                    {job.status || 'Pending'}
+                                </span>
+                            </div>
+
+                            {/* Requester Details */}
+                            {job.additionalData && job.additionalData.length > 0 ? (
+                                job.additionalData.map((dataItem, index) => (
+                                    <div key={index} className="mt-2">
+                                        {job.requesterData.role === 'Company' && (
+                                            <>
+                                                <h3 className="text-lg font-semibold">{dataItem.companyName}</h3>
+                                                <p className="text-gray-600">Email: {dataItem.email} | Phone: {dataItem.phoneNumber}</p>
+                                                <p className="text-gray-600">Mission: {dataItem.missionStatement} | Services: {dataItem.productsServices}</p>
+                                                <p className="text-gray-600">Start Date: {job.startDate} | End Date: {job.endDate}</p>
+                                            </>
+                                        )}
+                                        {job.requesterData.role.trim() === 'User' && (
+                                            <>
+                                                <h3 className="text-lg font-semibold">{dataItem.name}</h3>
+                                                <p className="text-gray-600">Email: {dataItem.email} | Phone: {dataItem.mobileNo}</p>
+                                                <p className="text-gray-600">Qualification: {dataItem.qualification}</p>
+                                                <p className="text-gray-600">Start Date: {job.startDate} | End Date: {job.endDate}</p>
+                                            </>
+                                        )}
+                                    </div>
+                                ))
+                            ) : (
+                                <p className="text-gray-500">No additional details available</p>
+                            )}
+
+                            {/* Accept/Reject Buttons */}
+                            {(!job.status || job.status === 'Pending') && (
+                                <div className="mt-4 flex space-x-2">
+                                {console.log("Job ID:", job.id)}
+                                    <button
+                                        onClick={() => handleRequestResponse(job.id, job.requesterId, job.bookingId, 'accept')}
+                                        className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+                                        disabled={loading}
+                                    >
+                                        Accept
+                                    </button>
+                                    <button
+                                        onClick={() => handleRequestResponse(job.id, job.requesterId, job.bookingId, 'reject')}
+                                        className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                                        disabled={loading}
+                                    >
+                                        Reject
+                                    </button>
+                                </div>
+                            )}
                         </div>
                     ))}
                 </div>
