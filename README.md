@@ -1,4 +1,3 @@
-
 # Nexta
 A full-stack web application for freelancers and clients to find each other.
 
@@ -6,10 +5,10 @@ A full-stack web application for freelancers and clients to find each other.
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
-<a href="https://hireme-v2.netlify.app/"><img src="https://github.com/omarabid/hireme/raw/master/docs/assets/hireme.png" alt="HireMe" width="300"></a>
+<center><a href="#"><img src="https://raw.githubusercontent.com/RA-L-PH/Nexta/refs/heads/main/frontend/src/assets/logo.png?token=GHSAT0AAAAAACVETGA6M7G533I2I2QULGLEZZHTXTQ" alt="HireMe" width="300"></a></center>
 
 ### Description
-HireMe is a full-stack web application for freelancers and clients to find each other. It allows freelancers to create profiles, showcase their skills, and apply to jobs. It also allows clients to post jobs and view applications. The application is built with React, Firebase, and Tailwind CSS.
+Nexta is a full-stack web application for freelancers and clients to find each other. It allows freelancers to create profiles, showcase their skills, and apply to jobs. It also allows clients to post jobs and view applications. The application is built with React, Firebase, and Tailwind CSS.
 
 ### Features
 
@@ -31,16 +30,16 @@ HireMe is a full-stack web application for freelancers and clients to find each 
 
 ### Quick Start
 
-1. Clone the repository: `git clone https://github.com/omarabid/hireme.git`
+1. Clone the repository: `https://github.com/RA-L-PH/Nexta.git`
 2. Install dependencies: `npm install` or `yarn install`
 3. Start the development server: `npm run dev` or `yarn dev`
-4. Open the application in your browser: `http://localhost:3000`
+4. Open the application in your browser: `http://localhost:5173`
 
 ### Screenshots
 
-<a href="https://raw.githubusercontent.com/RA-L-PH/Nexta/refs/heads/main/frontend/src/assets/Screenshot%202024-10-28%20235221.png"><img src="https://github.com/omarabid/hireme/raw/master/docs/assets/hireme-1.png" alt="HireMe" width="300"></a>
-<a href="https://github.com/omarabid/hireme/raw/master/docs/assets/hireme-2.png"><img src="https://github.com/omarabid/hireme/raw/master/docs/assets/hireme-2.png" alt="HireMe" width="300"></a>
-<a href="https://github.com/omarabid/hireme/raw/master/docs/assets/hireme-3.png"><img src="https://github.com/omarabid/hireme/raw/master/docs/assets/hireme-3.png" alt="HireMe" width="300"></a>
+<center><a href="https://raw.githubusercontent.com/RA-L-PH/Nexta/refs/heads/main/frontend/src/assets/Screenshot%202024-10-28%20235221.png?token=GHSAT0AAAAAACVETGA7CMXJOCT4VYPLGWXOZZHTROQ"><img src="https://raw.githubusercontent.com/RA-L-PH/Nexta/refs/heads/main/frontend/src/assets/Screenshot%202024-10-28%20235221.png?token=GHSAT0AAAAAACVETGA7CMXJOCT4VYPLGWXOZZHTROQ" alt="HireMe" width="100%"></a>
+<a href="https://raw.githubusercontent.com/RA-L-PH/Nexta/refs/heads/main/frontend/src/assets/Screenshot%202024-10-28%20234033.png?token=GHSAT0AAAAAACVETGA7SUTC4XR7IFGCOI7KZZHTVWA"><img src="https://raw.githubusercontent.com/RA-L-PH/Nexta/refs/heads/main/frontend/src/assets/Screenshot%202024-10-28%20234033.png?token=GHSAT0AAAAAACVETGA7SUTC4XR7IFGCOI7KZZHTVWA" alt="HireMe" width="100%"></a>
+<a href="https://raw.githubusercontent.com/RA-L-PH/Nexta/refs/heads/main/frontend/src/assets/Screenshot%202024-10-28%20234200.png?token=GHSAT0AAAAAACVETGA7AONPOYPQVNMY3FTSZZHTWMA"><img src="https://raw.githubusercontent.com/RA-L-PH/Nexta/refs/heads/main/frontend/src/assets/Screenshot%202024-10-28%20234200.png?token=GHSAT0AAAAAACVETGA7AONPOYPQVNMY3FTSZZHTWMA" alt="HireMe" width="100%"></a></center>
 
 ### Contributing
 
