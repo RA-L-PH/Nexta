@@ -1,1 +1,71 @@
 
+# Nexta
+A full-stack web application for freelancers and clients to find each other.
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+
+<a href="https://hireme-v2.netlify.app/"><img src="https://github.com/omarabid/hireme/raw/master/docs/assets/hireme.png" alt="HireMe" width="300"></a>
+
+### Description
+HireMe is a full-stack web application for freelancers and clients to find each other. It allows freelancers to create profiles, showcase their skills, and apply to jobs. It also allows clients to post jobs and view applications. The application is built with React, Firebase, and Tailwind CSS.
+
+### Features
+
+- User authentication and authorization
+- Freelancer profiles with skills, experience, and education
+- Job postings with descriptions, requirements, and applications
+- Job search by keyword, category, and location
+- Real-time chat for freelancers and clients
+- User profile editing and deletion
+- Job posting and application management
+- Email notifications for job postings and applications
+
+### Technologies
+
+- Frontend: React, React Router, React Hook Form, React Query, Tailwind CSS
+- Backend: Firebase, Firebase Firestore, Firebase Authentication, Firebase Storage
+- Database: Firebase Firestore
+- Deployment: Netlify
+
+### Quick Start
+
+1. Clone the repository: `git clone https://github.com/omarabid/hireme.git`
+2. Install dependencies: `npm install` or `yarn install`
+3. Start the development server: `npm run dev` or `yarn dev`
+4. Open the application in your browser: `http://localhost:3000`
+
+### Screenshots
+
+<a href="https://github.com/omarabid/hireme/raw/master/docs/assets/hireme-1.png"><img src="https://github.com/omarabid/hireme/raw/master/docs/assets/hireme-1.png" alt="HireMe" width="300"></a>
+<a href="https://github.com/omarabid/hireme/raw/master/docs/assets/hireme-2.png"><img src="https://github.com/omarabid/hireme/raw/master/docs/assets/hireme-2.png" alt="HireMe" width="300"></a>
+<a href="https://github.com/omarabid/hireme/raw/master/docs/assets/hireme-3.png"><img src="https://github.com/omarabid/hireme/raw/master/docs/assets/hireme-3.png" alt="HireMe" width="300"></a>
+
+### Contributing
+
+Contributions are welcome! Please open a pull request to get started.
+
+### License
+
+MIT License
+
+Copyright (c) 2023 Omar Abid
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
