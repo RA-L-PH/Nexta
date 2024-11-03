@@ -37,9 +37,9 @@ Nexta is a full-stack web application for freelancers and clients to find each o
 
 ### Screenshots
 
-<center><a href="https://raw.githubusercontent.com/RA-L-PH/Nexta/refs/heads/main/frontend/src/assets/Screenshot%202024-10-28%20235221.png?token=GHSAT0AAAAAACVETGA7CMXJOCT4VYPLGWXOZZHTROQ"><img src="https://raw.githubusercontent.com/RA-L-PH/Nexta/refs/heads/main/frontend/src/assets/Screenshot%202024-10-28%20235221.png?token=GHSAT0AAAAAACVETGA7CMXJOCT4VYPLGWXOZZHTROQ" alt="HireMe" width="600"></a>
-<a href="https://raw.githubusercontent.com/RA-L-PH/Nexta/refs/heads/main/frontend/src/assets/Screenshot%202024-10-28%20234033.png?token=GHSAT0AAAAAACVETGA7SUTC4XR7IFGCOI7KZZHTVWA"><img src="https://raw.githubusercontent.com/RA-L-PH/Nexta/refs/heads/main/frontend/src/assets/Screenshot%202024-10-28%20234033.png?token=GHSAT0AAAAAACVETGA7SUTC4XR7IFGCOI7KZZHTVWA" alt="HireMe" width="600"></a>
-<a href="https://raw.githubusercontent.com/RA-L-PH/Nexta/refs/heads/main/frontend/src/assets/Screenshot%202024-10-28%20234200.png?token=GHSAT0AAAAAACVETGA7AONPOYPQVNMY3FTSZZHTWMA"><img src="https://raw.githubusercontent.com/RA-L-PH/Nexta/refs/heads/main/frontend/src/assets/Screenshot%202024-10-28%20234200.png?token=GHSAT0AAAAAACVETGA7AONPOYPQVNMY3FTSZZHTWMA" alt="HireMe" width="600"></a></center>
+<center><a href="https://raw.githubusercontent.com/RA-L-PH/Nexta/refs/heads/main/frontend/src/assets/Screenshot%202024-10-28%20235221.png?token=GHSAT0AAAAAACVETGA7CMXJOCT4VYPLGWXOZZHTROQ"><img src="https://raw.githubusercontent.com/RA-L-PH/Nexta/refs/heads/main/frontend/src/assets/Screenshot%202024-10-28%20235221.png?token=GHSAT0AAAAAACVETGA7CMXJOCT4VYPLGWXOZZHTROQ" alt="HireMe" width="100%"></a>
+<a href="https://raw.githubusercontent.com/RA-L-PH/Nexta/refs/heads/main/frontend/src/assets/Screenshot%202024-10-28%20234033.png?token=GHSAT0AAAAAACVETGA7SUTC4XR7IFGCOI7KZZHTVWA"><img src="https://raw.githubusercontent.com/RA-L-PH/Nexta/refs/heads/main/frontend/src/assets/Screenshot%202024-10-28%20234033.png?token=GHSAT0AAAAAACVETGA7SUTC4XR7IFGCOI7KZZHTVWA" alt="HireMe" width="100%"></a>
+<a href="https://raw.githubusercontent.com/RA-L-PH/Nexta/refs/heads/main/frontend/src/assets/Screenshot%202024-10-28%20234200.png?token=GHSAT0AAAAAACVETGA7AONPOYPQVNMY3FTSZZHTWMA"><img src="https://raw.githubusercontent.com/RA-L-PH/Nexta/refs/heads/main/frontend/src/assets/Screenshot%202024-10-28%20234200.png?token=GHSAT0AAAAAACVETGA7AONPOYPQVNMY3FTSZZHTWMA" alt="HireMe" width="100%"></a></center>
 
 ### Contributing
 
