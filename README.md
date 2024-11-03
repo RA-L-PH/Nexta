@@ -8,7 +8,7 @@ A full-stack web application for freelancers and clients to find each other.
 <center><a href="#"><img src="https://raw.githubusercontent.com/RA-L-PH/Nexta/refs/heads/main/frontend/src/assets/logo.png?token=GHSAT0AAAAAACVETGA6M7G533I2I2QULGLEZZHTXTQ" alt="HireMe" width="300"></a></center>
 
 ### Description
-HireMe is a full-stack web application for freelancers and clients to find each other. It allows freelancers to create profiles, showcase their skills, and apply to jobs. It also allows clients to post jobs and view applications. The application is built with React, Firebase, and Tailwind CSS.
+Nexta is a full-stack web application for freelancers and clients to find each other. It allows freelancers to create profiles, showcase their skills, and apply to jobs. It also allows clients to post jobs and view applications. The application is built with React, Firebase, and Tailwind CSS.
 
 ### Features
 
