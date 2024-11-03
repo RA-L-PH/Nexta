@@ -30,10 +30,10 @@ Nexta is a full-stack web application for freelancers and clients to find each o
 
 ### Quick Start
 
-1. Clone the repository: `git clone https://github.com/omarabid/hireme.git`
+1. Clone the repository: `https://github.com/RA-L-PH/Nexta.git`
 2. Install dependencies: `npm install` or `yarn install`
 3. Start the development server: `npm run dev` or `yarn dev`
-4. Open the application in your browser: `http://localhost:3000`
+4. Open the application in your browser: `http://localhost:5173`
 
 ### Screenshots
 
