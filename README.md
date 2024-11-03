@@ -1,4 +1,3 @@
-
 # Nexta
 A full-stack web application for freelancers and clients to find each other.
 
